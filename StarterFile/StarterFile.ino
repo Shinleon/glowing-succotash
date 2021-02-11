@@ -36,7 +36,8 @@
 #define MEASURE 0x00  // Used to keep track of which screen is displayed: Measurement screen
 #define ALARM 0x01    // Used to keep track of which screen is displayed: Alarm screen
 #define BATTERY 0x02  // Used to keep track of which screen is displayed: Battery screen
- 
+
+#define SOC 0                   // Constant SOC value
                                 // Task Control Blocks
 TCB measurementTCB;             // Declare measurement TCB
 TCB stateOfChargeTCB;           // Declare state of charge TCB
@@ -60,7 +61,7 @@ byte hVoltOutofRange;           // Store alarm status for HV out of range
 
                                 // State Of Charge Data
 stateOfChargeData chargeState;  // Declare charge state data structure
-float stateOfCharge = 0;        
+float stateOfCharge = SOC;        
 
                                 // Contactor Data
 contactorData contactState;
@@ -135,7 +136,7 @@ void serialMonitor()
 {
   
       Serial.print("My State of Charge is: ");
-      Serial.println(stateOfCharge, DEC);
+      Serial.println(SOC, DEC);
       Serial.print("My clock is: ");
       Serial.print(clockTick, DEC);
       Serial.print("\n");
@@ -211,7 +212,7 @@ void setup() {
 
     
     /*Initialize SOC*/
-    chargeState = {&stateOfCharge};                                     // Initialize state of charge data struct with state of charge boolean
+    chargeState = {};                                               // Initialize state of charge data struct with state of charge boolean
     stateOfChargeTCB.task = &stateOfChargeTask;                         // Store a pointer to the soc task update function in the TCB
     stateOfChargeTCB.taskDataPtr = &chargeState;
     stateOfChargeTCB.next = NULL;

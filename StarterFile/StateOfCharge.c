@@ -12,19 +12,19 @@
   *                       every 3 seconds
   * Author(s): Leonard Shin, Leika Yamada
   **********************************************************************/
-void updateStateOfCharge ( float* theStateOfCharge ) {
-    extern byte clockTick;
-    if(clockTick%3 == 0x0){
-        *theStateOfCharge = EMPTY;
-      } 
-      else if(clockTick%3 == 0x1){
-        *theStateOfCharge = HALF;
-      }
-      else {
-        *theStateOfCharge = FULL;
-      }
-    return;
-}
+//void updateStateOfCharge ( float* theStateOfCharge ) {
+    //extern byte clockTick;
+    //if(clockTick%3 == 0x0){
+    //    *theStateOfCharge = EMPTY;
+    //  } 
+    //  else if(clockTick%3 == 0x1){
+    //    *theStateOfCharge = HALF;
+    //  }
+    //  else {
+    //    *theStateOfCharge = FULL;
+    //  }
+//    return;
+//}
 
 /***********************************************************************
   * Function name: stateOfChargeTask
@@ -37,10 +37,11 @@ void updateStateOfCharge ( float* theStateOfCharge ) {
   **********************************************************************/
 void stateOfChargeTask ( void* socData ) {
   
-    stateOfChargeData* data = (stateOfChargeData*) socData;
+    //stateOfChargeData* data = (stateOfChargeData*) socData;
     
                                                                           // Update all sensors
-    updateStateOfCharge(data->stateOfCharge);
+    //updateStateOfCharge(data->stateOfCharge);
+    // Purposefully left empty
     
   return;
 }

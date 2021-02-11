@@ -52,7 +52,7 @@ byte localOverCurrent = 0;
 byte localHVoltOutofRange = 0;
 
 /*State Of Charge Data*/
-float localStateOfCharge = 0;
+float localStateOfCharge = 1;
 
 /*Contactor Data*/
 bool localContactorState = 0;
@@ -217,14 +217,14 @@ void updateMeasurementDisplay () {
     
     tft.setTextSize(1.5);
 
-    if( stateOfCharge != localStateOfCharge ) {       // Update SOC on screen if not already updated
+   // if( stateOfCharge != localStateOfCharge ) {       // Update SOC on screen if not already updated
       
         localStateOfCharge = stateOfCharge;
         tft.fillRect(160, 40, 40, 20, BLACK);
         tft.setCursor(160, 40); 
         tft.print(localStateOfCharge);
         
-    }
+   // }
     if( temperature != localTemperature ){            // Update temperature on screen if not already updated
       
         localTemperature = temperature;
