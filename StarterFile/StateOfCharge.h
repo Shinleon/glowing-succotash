@@ -5,7 +5,7 @@ extern "C" {
 #ifndef STATEOFCHARGE_H_
 #define STATEOFCHARGE_H_
 
-                                            //Define the three different values to cycle through
+                                            // Define the three different values to cycle through
 #define EMPTY 0
 #define HALF  50
 #define FULL  100
@@ -17,7 +17,7 @@ extern "C" {
 
 typedef struct stateOfChargeTaskData {      // Defines a data struct to hold the SOC
   
-    float* stateOfCharge;
+    //float* stateOfCharge;
     
 } stateOfChargeData;
 
