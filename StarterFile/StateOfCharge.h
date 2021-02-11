@@ -6,9 +6,9 @@ extern "C" {
 #define STATEOFCHARGE_H_
 
                                             // Define the three different values to cycle through
-#define EMPTY 0
-#define HALF  50
-#define FULL  100
+//#define EMPTY 0
+//#define HALF  50
+//#define FULL  100
 
 #include <stdlib.h>
 #include <stdbool.h>
