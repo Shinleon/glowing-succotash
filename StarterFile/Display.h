@@ -22,6 +22,7 @@ extern "C" {
 #define BATTERY 0x02
 
 #define ACTIVE_NO_ACK   1
+#define ACTIVE_ACK      2
 
 /* Assign human-readable names to some common 16-bit color values*/
 #define  BLACK   0x0000

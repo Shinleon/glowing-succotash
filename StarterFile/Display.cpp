@@ -477,6 +477,62 @@ void updateDisplay (bool* contactorState){
         }
     }  
 }
+
+/*********************************************************************************
+    * Function name: checkAlarmButton
+    * Function inputs: void
+    * Function outputs: void
+    * Function description: Gather touch screen information and update button
+    *                       status.If a button is pressed update the button flag
+    *                       variables so that the alarms are all acknowledged, and
+    *                       the user can navigate away from the alarm screen.
+    * Author(s): Leonard Shin, Leika Yamada
+    ******************************************************************************/
+void checkAlarmButton (volatile byte* hVoltInterlock, byte* hVoltOutofRange, byte* overCurrent){
+  
+    digitalWrite(13, HIGH);
+    TSPoint p = ts.getPoint();                                                        // Capture touchscreen x, y, z pressure coordinates
+    digitalWrite(13, LOW);
+    
+    pinMode(XM, OUTPUT);                                                              // Configure LCD screen pins
+    pinMode(YP, OUTPUT);
+                                                                                      // Code is based on Arduino phonecal.ino example file
+    if ( p.z > MINPRESSURE && p.z < MAXPRESSURE ) {                                   // Check if sufficient pressure is applied, if it is get coordinates.
+        p.x = map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
+        p.y = (tft.height()-map(p.y, TS_MINY, TS_MAXY, tft.height(), 0));
+    }
+    
+    uint8_t alarmButton = 0;                                                                                  // Check if buttons are pressed
+      
+        if ( alarmButtons[alarmButton].contains(p.x, p.y)) {
+            
+            alarmButtons[alarmButton].press(true);                                            // Button is pressed
+        } else {
+            alarmButtons[alarmButton].press(false);                                           // Button not pressed
+        }
+
+        if ( alarmButtons[alarmButton].justReleased() ) { 
+            /*buttons[b].drawButton(true); Uncomment to Draw inverted button*/        // Re-draw normal version of button if it was inverted
+        }
+    
+        if (alarmButtons[alarmButton].justPressed()) {
+            //batteryButtons[b].drawButton(true);                                     // Draw inverted version of button to indicate it was pressed
+
+                                                                                      // alarm button is pressed,  acknowledge all alarms
+            if (alarmButton == 0) {
+                if(*hVoltInterlock == ACTIVE_NO_ACK){
+                    *hVoltInterlock = ACTIVE_ACK;
+                  }
+                if(*hVoltOutofRange == ACTIVE_NO_ACK){
+                    *hVoltOutofRange = ACTIVE_ACK;
+                  }
+                if(*overCurrent == ACTIVE_NO_ACK){
+                    *overCurrent = ACTIVE_ACK;
+                }
+            }
+        }  
+}
+
 /*********************************************************************************
     * Function name: displayTask
     * Function inputs: void* dispData
@@ -498,6 +554,7 @@ void displayTask ( void* dispData ) {
           if(ALARM != currentScreen){
               displayAlarmScreen();
           }
+          checkAlarmButton(data->hVoltInterlock, data->overCurrent, data->hVoltOutofRange);
       }
     else {
        updateDisplay(data->contactorState);
