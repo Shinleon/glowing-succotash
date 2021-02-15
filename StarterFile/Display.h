@@ -68,9 +68,18 @@ extern "C" {
 typedef struct displayTaskData {      // Data structure for the display task, 
                                       // Stores the HVIL, and Contactor input/output pin number
                                       // Stores the current contactor state, Open or closed
-    const byte* hvilPin;
+    const int* hvilPin;
     bool* contactorState;
     int* contactorLED;
+    float* hvCurrent;
+    float* hvVoltage;
+    float* temperature;
+    bool* hVIL;
+    volatile byte* hVoltInterlock;
+    byte* overCurrent;
+    byte* hVoltOutofRange;
+    float* stateOfCharge;
+    bool* contactorAck;
     
 } displayData;
 

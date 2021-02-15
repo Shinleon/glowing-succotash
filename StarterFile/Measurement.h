@@ -16,7 +16,7 @@ extern "C" {
 
 typedef struct measurementTaskData {      // Contains Measurement Data
     bool* hvilStatus;
-    const byte* hvilPin;
+    const int* hvilPin;
     float* temperature;
   	float* hvCurrent;
 	  float* hvVoltage;

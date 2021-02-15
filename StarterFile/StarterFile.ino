@@ -57,8 +57,7 @@ float hvCurrent     = 0;        // Stores the measured current in the HVIL
 float hvVoltage     = 0;        // Stores the measured voltage in the HVIL
 float temperature   = 0;        // Stores the measured temperature of the system
 bool hVIL           = 0;        // Stores whether or not the HVIL is closed(1) or open(0)
-const byte hvilPin  = 18;       // Stores the input pin number for HVIL
-const int hvilPin2 = 21;
+const int hvilPin   = 21;       // Stores the input pin number for HVIL
                                 // Alarm Data
 alarmData alarmStatus;          // Declare an Alarm data structure - defined in Alarm.h
 volatile byte hVoltInterlock = 0;   // Store the alarm status for the HVIL alarm
@@ -231,7 +230,7 @@ void setup() {
 
    
     /*Initialize Display*/
-    displayUpdates = {&hvilPin, &contactorState, &contactorLED};        // Initialize display data struct with data    
+    displayUpdates = {&hvilPin, &contactorState, &contactorLED, &hvCurrent, &hvVoltage, &temperature, &hVIL, &hVoltInterlock, &overCurrent, &hVoltOutofRange, &stateOfCharge, &contactorAck};        // Initialize display data struct with data    
     displayTCB.task = &displayTask;                                     // Store a pointer to the displayTask update function in the TCB
     displayTCB.taskDataPtr = &displayUpdates;
     displayTCB.next = NULL;
@@ -271,11 +270,11 @@ void setup() {
 
 
     /*Initailize input and output pins*/
-    pinMode(hvilPin2, INPUT_PULLUP);
+    pinMode(hvilPin, INPUT_PULLUP);
     pinMode(contactorLED, OUTPUT);
 
     /*Initailize HVIL Timer*/
-    attachInterrupt(digitalPinToInterrupt(hvilPin2), hvilISR , RISING);
+    attachInterrupt(digitalPinToInterrupt(hvilPin), hvilISR , RISING);
     interrupts();
 
 

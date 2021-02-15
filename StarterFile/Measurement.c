@@ -12,9 +12,9 @@
   *                      voltage (by expressing 0 or 1) on the provided pin
   * Author(s): Leonard Shin; Leika Yamada
   *************************************************************************/
-void updateHVIL ( bool* hvilReading, const byte* pin ) {
+void updateHVIL ( bool* hvilReading, const int* pin ) {
   
-    //*hvilReading = digitalRead(*pin);
+    *hvilReading = digitalRead(*pin);
 
 }
 

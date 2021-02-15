@@ -24,20 +24,6 @@ extern uint16_t buttoncolors[3];
 extern Elegoo_GFX_Button batteryButtons[2];
 extern char batteryButtonLabels[2][4];
 
-/*Measurement, Alarm, HVIL, and Contactor data*/
-extern float hvCurrent;
-extern float hvVoltage;
-extern float temperature;
-extern bool hVIL;
-extern const byte hvilPin;
-extern byte hVoltInterlock;
-extern byte overCurrent;
-extern byte hVoltOutofRange;
-extern float stateOfCharge;
-extern bool contactorState;
-extern int contactorLED;
-extern bool contactorAck;
-
 /*Local Copies of global data to keep track of updated values*/
 /*Measurement Data*/
 float localHVCurrent     = 0;
@@ -87,7 +73,7 @@ void batteryButtonDisplay (){
     * Function description: Draws the measurement labels on the measurement screen. 
     * Author(s): Leonard Shin, Leika Yamada
     ******************************************************************************/  
-void displayMeasurementScreen (){
+void displayMeasurementScreen (bool* hVIL){
   
     currentScreen = MEASURE;                      // Set the current screen to measurement screen
     
@@ -115,7 +101,7 @@ void displayMeasurementScreen (){
     tft.setCursor(0, 120);
     tft.print("HVIL Status: ");
     tft.setCursor(160, 120);
-    if( hVIL ){                              // Check if the dip switch is open or closed and print status
+    if( *hVIL ){                              // Check if the dip switch is open or closed and print status
         tft.print("OPEN");
     }else{
         tft.print("CLOSED");
@@ -170,7 +156,7 @@ void displayAlarmScreen (){
     * Function description: Draws the battery labels on the battery screen. 
     * Author(s): Leonard Shin, Leika Yamada
     ******************************************************************************/
-void displayBatteryScreen (){
+void displayBatteryScreen (bool* contactorAck){
     
     currentScreen = BATTERY;
     tft.fillRect(0, 0, 240, 200, BLACK);
@@ -189,15 +175,15 @@ void displayBatteryScreen (){
     
     if(localContactorState) {                      // Checks contactor to see if the button is pressed, and contactor is closed ON, open OFF
         tft.print("ON");                           //  check if contactor change is acknowledged: if so turn it off; if not, do nothing
-        if(contactorAck){
-            contactorAck = 0;
+        if(*contactorAck){
+            *contactorAck = 0;
         }
         
     }
     else { 
         tft.print("OFF");
-        if(contactorAck){
-            contactorAck = 0;
+        if(*contactorAck){
+            *contactorAck = 0;
         }
     }
     return; 
@@ -213,45 +199,45 @@ void displayBatteryScreen (){
     *                       already updated.
     * Author(s): Leonard Shin, Leika Yamada
     ******************************************************************************/
-void updateMeasurementDisplay () {
+void updateMeasurementDisplay (float* stateOfCharge, float* temperature, float* hvCurrent, float*hvVoltage, bool* hVIL) {
     
     tft.setTextSize(1.5);
 
-   // if( stateOfCharge != localStateOfCharge ) {       // Update SOC on screen if not already updated
+   // if( *stateOfCharge != localStateOfCharge ) {       // Update SOC on screen if not already updated
       
-        localStateOfCharge = stateOfCharge;
+        localStateOfCharge = *stateOfCharge;
         tft.fillRect(160, 40, 40, 20, BLACK);
         tft.setCursor(160, 40); 
         tft.print(localStateOfCharge);
         
    // }
-    if( temperature != localTemperature ){            // Update temperature on screen if not already updated
+    if( *temperature != localTemperature ){            // Update temperature on screen if not already updated
       
-        localTemperature = temperature;
+        localTemperature = *temperature;
         tft.fillRect(160, 60, 40, 20, BLACK);
         tft.setCursor(160, 60); 
         tft.print(localTemperature);
       
     }
-    if( hvCurrent != localHVCurrent ){                // Update HIVL current on screen if not already updated
+    if( *hvCurrent != localHVCurrent ){                // Update HIVL current on screen if not already updated
       
-        localHVCurrent = hvCurrent;
+        localHVCurrent = *hvCurrent;
         tft.fillRect(160, 80, 40, 20, BLACK);
         tft.setCursor(160, 80); 
         tft.print(localHVCurrent);
       
     }
-    if( hvVoltage != localHVVoltage ){                // Update HVVoltage on screen if not already updated
+    if( *hvVoltage != localHVVoltage ){                // Update HVVoltage on screen if not already updated
       
-        localHVVoltage = hvVoltage;
+        localHVVoltage = *hvVoltage;
         tft.fillRect(160, 100, 40, 20, BLACK);
         tft.setCursor(160, 100); 
         tft.print(localHVVoltage);
       
     }
-    if( hVIL != localHVIL ){                          // Update HIVL status on screen if not already updated
+    if( *hVIL != localHVIL ){                          // Update HIVL status on screen if not already updated
         
-        localHVIL = hVIL;
+        localHVIL = *hVIL;
         tft.fillRect(160, 120, 40, 20, BLACK);
         tft.setCursor(160, 120);
         tft.setTextColor(CYAN);
@@ -305,14 +291,14 @@ void updateBatteryDisplay ( bool* contactorState ) {
     *                       already updated.
     * Author(s): Leonard Shin, Leika Yamada
     ******************************************************************************/
-void updateAlarmDisplay () {
+void updateAlarmDisplay (volatile byte* hVoltInterlock, byte* hVoltOutofRange, byte* overCurrent) {
     
     tft.setTextSize(1.5);
     tft.setTextColor(CYAN);
     
-    if( hVoltInterlock != localHVoltInterlock ){            // Check HVIL status for updates, if 0 alarm is not active, if 1 active not acknowledged,
+    if( *hVoltInterlock != localHVoltInterlock ){            // Check HVIL status for updates, if 0 alarm is not active, if 1 active not acknowledged,
                                                             // if 2 active and acknowledged.
-        localHVoltInterlock = hVoltInterlock;
+        localHVoltInterlock = *hVoltInterlock;
       
         if(localHVoltInterlock == 0x00){
             tft.fillRect(120, 40, 90, 20, BLACK);
@@ -331,9 +317,9 @@ void updateAlarmDisplay () {
         } 
     }
     
-    if( hVoltOutofRange != localHVoltOutofRange ){           // Check HV out of range for updates, if 0 alarm is not active, if 1 active not acknowledged,
+    if( *hVoltOutofRange != localHVoltOutofRange ){           // Check HV out of range for updates, if 0 alarm is not active, if 1 active not acknowledged,
                                                              // if 2 active and acknowledged.
-        localHVoltOutofRange = hVoltOutofRange;
+        localHVoltOutofRange = *hVoltOutofRange;
         tft.fillRect(120, 60, 90, 20, BLACK);
         tft.setCursor(120, 60);
         
@@ -348,9 +334,9 @@ void updateAlarmDisplay () {
         } 
     }
     
-    if( overCurrent != localOverCurrent ){                // Check HV out of range for updates, if 0 alarm is not active, if 1 active not acknowledged,
+    if( *overCurrent != localOverCurrent ){                // Check HV out of range for updates, if 0 alarm is not active, if 1 active not acknowledged,
                                                           // if 2 active and acknowledged
-        localOverCurrent = overCurrent;
+        localOverCurrent = *overCurrent;
         tft.fillRect(120, 80, 90, 20, BLACK);
         tft.setCursor(120, 80);
       
@@ -379,7 +365,7 @@ void updateAlarmDisplay () {
     *                       the contactorState variable.
     * Author(s): Leonard Shin, Leika Yamada
     ******************************************************************************/
-void updateDisplay (){
+void updateDisplay (bool* contactorState){
   
     digitalWrite(13, HIGH);
     TSPoint p = ts.getPoint();                                                        // Capture touchscreen x, y, z pressure coordinates
@@ -415,12 +401,12 @@ void updateDisplay (){
 
                                                                                       // OFF button is pressed,  update contactor to open
             if (b == 0) {
-                contactorState = 0;
+                *contactorState = 0;
             }
         
                                                                                       // ON button is pressed, update contactor to closed
             if (b == 1) {
-                contactorState = 1;
+                *contactorState = 1;
             }
         
         /*delay(100); uncomment to debounce UI*/
@@ -480,11 +466,11 @@ void updateDisplay (){
 void displayTask ( void* dispData ) {
    
     displayData* data = (displayData*) dispData;                                          // Display correct screen on button press
-    updateDisplay();                                                                      // Print the main display page                                                                   
+    updateDisplay(data->contactorState);                                                                      // Print the main display page                                                                   
                                                                                           // Check if any buttons are pressed, then display the cooresponding screen
     if ( measureButton == true ){
       
-        displayMeasurementScreen();
+        displayMeasurementScreen(data->hVIL);
                                                                                           // Reset measure button to be false, so code does not repeatedly execute
         measureButton = false;  
     }
@@ -496,18 +482,18 @@ void displayTask ( void* dispData ) {
     }
     else if ( batteryButton == true ){
       
-        displayBatteryScreen();
+        displayBatteryScreen(data->contactorAck);
                                                                                           // Reset measure button to be false, so code does not repeatedly execute
         batteryButton = false;  
     }
                                                                                           // Check the current screen, then update the values on those screens
     if( currentScreen == MEASURE ){
       
-      updateMeasurementDisplay();  
+      updateMeasurementDisplay(data->stateOfCharge, data->temperature, data->hvCurrent, data->hvVoltage, data->hVIL);  
     }
     else if( currentScreen == ALARM ){
       
-      updateAlarmDisplay();
+      updateAlarmDisplay(data->hVoltInterlock, data->hVoltOutofRange, data->overCurrent);
     }
     else{
       
