@@ -99,6 +99,11 @@ byte currentScreen = 0;                                      // Stores which scr
 Elegoo_GFX_Button batteryButtons[2];                         // Creates an array of buttons for the battery ON, OFF buttons
 char batteryButtonLabels[2][4] = {"OFF", "ON"};
 
+/*Alarm Screen button*/
+Elegoo_GFX_Button alarmButtons[1];                           // Creates an alarm button array
+char alarmButtonLabels[1][12] = {"Ack. All"};
+
+
 //unsigned long time_1 = 0;
 /*Timer Initialization*/
 volatile bool timeBaseFlag = 0;

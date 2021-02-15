@@ -24,6 +24,10 @@ extern uint16_t buttoncolors[3];
 extern Elegoo_GFX_Button batteryButtons[2];
 extern char batteryButtonLabels[2][4];
 
+/*Alarm Screen button*/
+extern Elegoo_GFX_Button alarmButtons[1];
+extern char alarmButtonLabels[1][12];
+
 /*Local Copies of global data to keep track of updated values*/
 /*Measurement Data*/
 float localHVCurrent     = 0;
@@ -61,6 +65,26 @@ void batteryButtonDisplay (){
       
         batteryButtons[row].drawButton();
     }
+    
+    return;
+    
+  }
+
+/*********************************************************************************
+    * Function name: alarmButtonDisplay 
+    * Function inputs: void
+    * Function outputs: void
+    * Function description: Draws two buttons, ON and OFF for the battery screen. 
+    * Author(s): Leonard Shin, Leika Yamada
+    ******************************************************************************/
+void alarmButtonDisplay (){
+  
+        alarmButtons[0].initButton(&tft, ALARM_BUTTON_X, ALARM_BUTTON_Y,     // Takes input: X,Y,Width,Height,Outline Color, Color, TextColor,
+            ALARM_BUTTON_W, ALARM_BUTTON_H, WHITE, buttoncolors[ONE], BLACK,                                                        // label, and size
+            alarmButtonLabels[0], BUTTON_TEXTSIZE); 
+      
+        alarmButtons[0].drawButton();
+    
     
     return;
     
@@ -121,7 +145,7 @@ void displayAlarmScreen (){
   
     currentScreen = ALARM;
     tft.fillRect(0, 0, 240, 200, BLACK);
-    
+    alarmButtonDisplay ();
     tft.setCursor(75, 0);                                                                                      
     tft.setTextColor(CYAN); tft.setTextSize(2); 
                                                                   
@@ -466,7 +490,18 @@ void updateDisplay (bool* contactorState){
 void displayTask ( void* dispData ) {
    
     displayData* data = (displayData*) dispData;                                          // Display correct screen on button press
-    updateDisplay(data->contactorState);                                                                      // Print the main display page                                                                   
+    volatile byte* myHvil = data->hVoltInterlock;
+    byte* myOC = data->overCurrent;
+    byte* myHVOR = data->hVoltOutofRange;
+    
+    if(*myHvil == ACTIVE_NO_ACK || *myOC == ACTIVE_NO_ACK || *myHVOR == ACTIVE_NO_ACK){ // If any alarms have not been acknowledged navigate to that screen.
+          if(ALARM != currentScreen){
+              displayAlarmScreen();
+          }
+      }
+    else {
+       updateDisplay(data->contactorState);
+    
                                                                                           // Check if any buttons are pressed, then display the cooresponding screen
     if ( measureButton == true ){
       
@@ -486,6 +521,7 @@ void displayTask ( void* dispData ) {
                                                                                           // Reset measure button to be false, so code does not repeatedly execute
         batteryButton = false;  
     }
+}
                                                                                           // Check the current screen, then update the values on those screens
     if( currentScreen == MEASURE ){
       
@@ -499,6 +535,5 @@ void displayTask ( void* dispData ) {
       
       updateBatteryDisplay(data->contactorState);
     } 
-    
   return;
 }

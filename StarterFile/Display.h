@@ -21,6 +21,8 @@ extern "C" {
 #define ALARM 0x01
 #define BATTERY 0x02
 
+#define ACTIVE_NO_ACK   1
+
 /* Assign human-readable names to some common 16-bit color values*/
 #define  BLACK   0x0000
 #define BLUE    0x001F
@@ -44,6 +46,12 @@ extern "C" {
 #define BATTERY_BUTTON_Y 100
 #define BATTERY_BUTTON_W 80
 #define BATTERY_BUTTON_H 50
+
+#define ALARM_BUTTON_X 120
+#define ALARM_BUTTON_Y 150
+#define ALARM_BUTTON_W 130
+#define ALARM_BUTTON_H 50
+
 
 /*Button adjustment spacing*/
 #define ONE 1
