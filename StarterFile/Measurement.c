@@ -14,7 +14,7 @@
   *************************************************************************/
 void updateHVIL ( bool* hvilReading, const byte* pin ) {
   
-    *hvilReading = digitalRead(*pin);
+    //*hvilReading = digitalRead(*pin);
 
 }
 

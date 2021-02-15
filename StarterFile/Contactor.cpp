@@ -12,20 +12,21 @@
   *                       the contactor signal into an output)
   * Author(s): Leonard Shin, Leika Yamada
   *****************************************************************/
-void updateContactor ( bool* contactorStatus, bool* local, bool* ack, int* contactorLED ) {
-        // Need to ack change if it was changed
-    if(*contactorStatus != *local){
+void updateContactor ( bool* contactorStatus, bool* local, bool* ack, int* contactorLED, volatile byte* hvilAlarm) {
+    // Need to acknowledge change if it was changed
+    noInterrupts();
+    if( *contactorStatus != *local ){
         *local = *contactorStatus;
         *ack = true; 
     }
-    if( *contactorStatus == 0 ){
+    if( *contactorStatus == 1 && *hvilAlarm == NOT_ACTIVE ){
         
-        digitalWrite(*contactorLED, LOW);
-    }
-    else{
         digitalWrite(*contactorLED, HIGH);
     }
-      
+    else{
+        digitalWrite(*contactorLED, LOW);
+    }
+    interrupts(); 
     return;
 }
 
@@ -40,7 +41,7 @@ void contactorTask ( void* contactData ) {
   
     contactorData* data = (contactorData*) contactData;
     
-    updateContactor(data->contactorStatus, data->localContactor, data->acknowledge, data->contactorLED);   // Update all sensors
+    updateContactor(data->contactorStatus, data->localContactor, data->acknowledge, data->contactorLED, data->hvilAlarm);   // Update all sensors
     
     return;
 }

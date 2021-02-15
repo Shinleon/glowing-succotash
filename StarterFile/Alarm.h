@@ -16,7 +16,7 @@ extern "C" {
 
 
 typedef struct alarmTaskData {
-    byte* hVoltInterlock;           // Store HVIL Status, over current, HV out of range
+    volatile byte* hVoltInterlock;           // Store HVIL Status, over current, HV out of range
     byte* overCurrent;              // 0 for alarm not active, 1, for active not acknowledged          
     byte* hVoltOutofRange;          // and 2 for active acknowledged
 } alarmData;

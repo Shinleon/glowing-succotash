@@ -1,3 +1,5 @@
+#include <TimerOne.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -15,6 +17,10 @@
 #include <Elegoo_GFX.h>         // Core graphics library
 #include <Elegoo_TFTLCD.h>      // Hardware-specific library
 
+
+#define NOT_ACTIVE      0
+#define ACTIVE_NO_ACK   1
+#define ACTIVE_ACK      2
 
 /* The control pins for the LCD can be assigned to any digital or
  * analog pins...but we'll use the analog pins as this allows us to
@@ -51,11 +57,11 @@ float hvCurrent     = 0;        // Stores the measured current in the HVIL
 float hvVoltage     = 0;        // Stores the measured voltage in the HVIL
 float temperature   = 0;        // Stores the measured temperature of the system
 bool hVIL           = 0;        // Stores whether or not the HVIL is closed(1) or open(0)
-const byte hvilPin  = 22;       // Stores the input pin number for HVIL
-
+const byte hvilPin  = 18;       // Stores the input pin number for HVIL
+const int hvilPin2 = 21;
                                 // Alarm Data
 alarmData alarmStatus;          // Declare an Alarm data structure - defined in Alarm.h
-byte hVoltInterlock;            // Store the alarm status for the HVIL alarm
+volatile byte hVoltInterlock = 0;   // Store the alarm status for the HVIL alarm
 byte overCurrent;               // Store the overcurretn alarm status
 byte hVoltOutofRange;           // Store alarm status for HV out of range
 
@@ -94,7 +100,10 @@ byte currentScreen = 0;                                      // Stores which scr
 Elegoo_GFX_Button batteryButtons[2];                         // Creates an array of buttons for the battery ON, OFF buttons
 char batteryButtonLabels[2][4] = {"OFF", "ON"};
 
-unsigned long time_1 = 0;
+//unsigned long time_1 = 0;
+/*Timer Initialization*/
+volatile bool timeBaseFlag = 0;
+volatile bool myHvilStat = 0;
 
 /***********************************************************************************************************************
   * Function name: loop
@@ -106,24 +115,64 @@ unsigned long time_1 = 0;
   **********************************************************************************************************************/
 void loop() {
     while( 1 ){
-        unsigned long time_2 = millis();                                                              // Measures task start time
+        if( 1 == timeBaseFlag)  // check if timeBaseFlag has been set by the timer
+        {                       //  interrupt (interrupt runs once per global time
+                                //  time base period)
+            timeBaseFlag = 0;
 
-        if(time_2 - time_1 > 1000){
-          time_1 = time_2;
+            scheduler();    
+            
+        }                                                         
+    }
+}
+/******************************************************************************
+  * Function name:    TODO
+  * Function inputs:  void
+  * Function outputs: void
+  * Function description: This displays all of our processes to the serial
+  *                       display. Used for purposes of debugging the system.
+  * Author(s): Leonard Shin, Leika Yamada
+  ******************************************************************************/
+void scheduler() {
+  //TODO
+   //unsigned long time_2 = millis();                                                              // Measures task start time
+        //if(time_2 - time_1 > 1000){
+        // time_1 = time_2;
           for( int i = 0; i < taskNumber/* - 1*/; i++ )                                                           
           {
             tasks[i]->task(tasks[i]->taskDataPtr);                                                              // Call all 5 tasks, measurement, SOC, contactor, alarm, display
           }
-        clockTick = ( clockTick + 1 ) % 18;                                                           // Get clock tick 0 - 18 to keep system in real time
-        }
+        //clockTick = ( clockTick + 1 ) % 18;                                                           // Get clock tick 0 - 18 to keep system in real time
+        //}
         // tasks[4]->task(tasks[4]->taskDataPtr); 
         /*serialMonitor();*/                                                                          // Uncomment this line for debugging
         //unsigned long time_2 = millis();                                                            // Measures task end time
         //unsigned long time_3 = 1000 - ( time_2 - time_1 );                                          // Calculates how much to sleep in millisec, for tasks to execute in 1 sec. intervals
-        //delay(time_3);                                                         
-    }
+        //delay(time_3);
 }
-
+/******************************************************************************
+  * Function name:    timerISR
+  * Function inputs:  void
+  * Function outputs: void
+  * Function description: Set the flag to run the interrupt service routine. Timer 
+  *                       will be set to run once every 100 milliseconds.
+  * Author(s): Leonard Shin, Leika Yamada
+  ******************************************************************************/
+void timerISR() {   // interrupt service routine
+    timeBaseFlag = 1;    // set timerISR flag
+}
+/******************************************************************************
+  * Function name:    hvilISR
+  * Function inputs:  void
+  * Function outputs: void
+  * Function description: Set the flag to run the interrupt service routine. Timer 
+  *                       will be set to run once every 100 milliseconds.
+  * Author(s): Leonard Shin, Leika Yamada
+  ******************************************************************************/
+void hvilISR() {   // interrupt service routine for the hvil
+    hVoltInterlock = ACTIVE_NO_ACK;
+    digitalWrite(contactorLED, LOW);
+}
 /******************************************************************************
   * Function name:    serialMonitor
   * Function inputs:  void
@@ -132,8 +181,7 @@ void loop() {
   *                       display. Used for purposes of debugging the system.
   * Author(s): Leonard Shin, Leika Yamada
   ******************************************************************************/
-void serialMonitor()
-{
+void serialMonitor() {
   
       Serial.print("My State of Charge is: ");
       Serial.println(SOC, DEC);
@@ -169,7 +217,10 @@ void serialMonitor()
   * Author(s): Leonard Shin, Leika Yamada
   *******************************************************************/
 void setup() {  
-
+    /*Initialize the Global time base Timer*/
+    Timer1.initialize(100000);
+    Timer1.attachInterrupt(timerISR);
+    Timer1.start();
        
     /* Initialize Measurement & Sensors*/
     measure = {&hVIL, &hvilPin, &temperature, &hvCurrent, &hvVoltage};  // Initailize measure data struct with data
@@ -196,7 +247,7 @@ void setup() {
     
     /*Initialize Contactor*/
     contactState = {&contactorState, &contactorLocal,                   // Initialize contactor data struct with contactor data
-                    &contactorAck, &contactorLED};                    
+                    &contactorAck, &contactorLED, &hVoltInterlock};                    
     contactorTCB.task = &contactorTask;                                 // Store a pointer to the contactor task update function in the TCB                             
     contactorTCB.taskDataPtr = &contactState;
     contactorTCB.next = NULL;
@@ -220,8 +271,12 @@ void setup() {
 
 
     /*Initailize input and output pins*/
-    pinMode(hvilPin, INPUT);
+    pinMode(hvilPin2, INPUT_PULLUP);
     pinMode(contactorLED, OUTPUT);
+
+    /*Initailize HVIL Timer*/
+    attachInterrupt(digitalPinToInterrupt(hvilPin2), hvilISR , RISING);
+    interrupts();
 
 
     /*Initialize serial communication*/
@@ -266,7 +321,7 @@ void setup() {
     tft.setRotation(2); 
     tft.fillScreen(BLACK);         
     
-    unsigned long time_1 = millis();                                                                             
+    //unsigned long time_1 = millis();                                                                             
 
    /*Create scroll buttons for measurement, alarm, and battery screens*/
   for (uint8_t row=0; row<3; row++) {                                                         // Measures Screen Button button coordinates start from the center of the button

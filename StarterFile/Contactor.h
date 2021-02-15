@@ -11,12 +11,16 @@ extern "C" {
 #include <Arduino.h>
 
 
+#define NOT_ACTIVE      0
+
+
 typedef struct contactorTaskData {  // Structure that holds contactor data
     bool* contactorStatus;          // Contactor: 1 closed, 0 open
-    bool* localContactor;          // holds a local version of the contactor that no other task modifies to check if the contactor Status was update
+    bool* localContactor;           // holds a local version of the contactor that no other task modifies to check if the contactor Status was update
     bool* acknowledge;              // if it was acknowledged it should flip the acknowledge flag to true, which will then be turned off by the display when
                                     //  it notices that the acknowledge flag is true;
     int* contactorLED;              // Output pin number
+    volatile byte* hvilAlarm;                // hvil alarm status
 } contactorData;
 
 

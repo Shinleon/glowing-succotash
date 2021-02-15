@@ -11,19 +11,19 @@
   *                       to cycle between [0, 1, 2] every second
   * Author(s): Leonard Shin; Leika Yamada
   *****************************************************************/
-void updateHVoltInterlockAlarm ( byte* hVoltInterlock ) {
+void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock ) {
     // 
     // 
     extern byte clockTick;
-    if( clockTick % 3 == 0 ){
-        *hVoltInterlock = NOT_ACTIVE;
-    }
-    else if ( clockTick %3 == 1 ){
-        *hVoltInterlock = ACTIVE_NO_ACK;
-    }
-    else{
-        *hVoltInterlock = ACTIVE_ACK;
-    }
+    //if( clockTick % 3 == 0 ){
+      //  *hVoltInterlock = NOT_ACTIVE;
+   // }
+   // else if ( clockTick %3 == 1 ){
+    //    *hVoltInterlock = ACTIVE_NO_ACK;
+    //}
+    //else{
+    //    *hVoltInterlock = ACTIVE_ACK;
+    //}
 }
 
 /**********************************************************************
