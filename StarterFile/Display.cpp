@@ -425,7 +425,7 @@ void updateDisplay (bool* contactorState, bool* contactorAck){
 
                                                                                       // OFF button is pressed,  update contactor to open
             if (b == 0) {
-                //*contactorState = 0;
+                *contactorState = 0;
                 *contactorAck = 0;
             }
         
