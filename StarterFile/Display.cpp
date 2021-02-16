@@ -144,6 +144,8 @@ void displayMeasurementScreen (bool* hVIL){
 void displayAlarmScreen (){
   
     currentScreen = ALARM;
+    tft.setTextSize(1.5);
+    tft.setTextColor(CYAN);
     tft.fillRect(0, 0, 240, 200, BLACK);
     alarmButtonDisplay ();
     tft.setCursor(75, 0);                                                                                      
@@ -156,19 +158,19 @@ void displayAlarmScreen (){
     tft.print("HVIL Alarm: ");
     
     tft.setCursor(120, 40);
-    tft.print("NOT ACTIVE");
+   // tft.print("NOT ACTIVE");
     
     tft.setCursor(0, 60);
     tft.print("HV Out of Range: ");
     
     tft.setCursor(120, 60);
-    tft.print("NOT ACTIVE");
+   // tft.print("NOT ACTIVE");
     
     tft.setCursor(0, 80);
     tft.print("Overcurrent status: ");
     
     tft.setCursor(120, 80);
-    tft.print("NOT ACTIVE");
+    //tft.print("NOT ACTIVE");
     
     return;
 }
@@ -320,7 +322,7 @@ void updateAlarmDisplay (volatile byte* hVoltInterlock, byte* hVoltOutofRange, b
     tft.setTextSize(1.5);
     tft.setTextColor(CYAN);
     
-    if( *hVoltInterlock != localHVoltInterlock ){            // Check HVIL status for updates, if 0 alarm is not active, if 1 active not acknowledged,
+   // if( *hVoltInterlock != localHVoltInterlock ){            // Check HVIL status for updates, if 0 alarm is not active, if 1 active not acknowledged,
                                                             // if 2 active and acknowledged.
         localHVoltInterlock = *hVoltInterlock;
       
@@ -339,9 +341,9 @@ void updateAlarmDisplay (volatile byte* hVoltInterlock, byte* hVoltOutofRange, b
             tft.setCursor(120, 40);
             tft.print("ACTIVE ACK.");
         } 
-    }
+   // }
     
-    if( *hVoltOutofRange != localHVoltOutofRange ){           // Check HV out of range for updates, if 0 alarm is not active, if 1 active not acknowledged,
+    //if( *hVoltOutofRange != localHVoltOutofRange ){           // Check HV out of range for updates, if 0 alarm is not active, if 1 active not acknowledged,
                                                              // if 2 active and acknowledged.
         localHVoltOutofRange = *hVoltOutofRange;
         tft.fillRect(120, 60, 90, 20, BLACK);
@@ -356,9 +358,9 @@ void updateAlarmDisplay (volatile byte* hVoltInterlock, byte* hVoltOutofRange, b
         else{
             tft.print("ACTIVE ACK.");
         } 
-    }
+   // }
     
-    if( *overCurrent != localOverCurrent ){                // Check HV out of range for updates, if 0 alarm is not active, if 1 active not acknowledged,
+   // if( *overCurrent != localOverCurrent ){                // Check HV out of range for updates, if 0 alarm is not active, if 1 active not acknowledged,
                                                           // if 2 active and acknowledged
         localOverCurrent = *overCurrent;
         tft.fillRect(120, 80, 90, 20, BLACK);
@@ -373,7 +375,7 @@ void updateAlarmDisplay (volatile byte* hVoltInterlock, byte* hVoltOutofRange, b
         else{
           tft.print("ACTIVE ACK.");
         } 
-    }
+   // }
     
     return;
 }
@@ -572,7 +574,6 @@ void displayTask ( void* dispData ) {
         else if ( alarmButton == true ){
       
             displayAlarmScreen();
-            updateAlarmDisplay(data->hVoltInterlock, data->hVoltOutofRange, data->overCurrent);
                                                                                           // Reset alarm button to be false, so code does not repeatedly execute
             alarmButton = false;  
         }
