@@ -572,6 +572,7 @@ void displayTask ( void* dispData ) {
         else if ( alarmButton == true ){
       
             displayAlarmScreen();
+            updateAlarmDisplay(data->hVoltInterlock, data->hVoltOutofRange, data->overCurrent);
                                                                                           // Reset alarm button to be false, so code does not repeatedly execute
             alarmButton = false;  
         }
