@@ -59,7 +59,7 @@ float hvCurrent     = 0;        // Stores the measured current in the HVIL
 byte currPin = A12;
 float hvVoltage     = 0;        // Stores the measured voltage in the HVIL
 byte voltPin = A13;
-bool hVIL           = 0;        // Stores whether or not the HVIL is closed(1) or open(0)
+bool hVIL           = 0;        // Stores whether or not the HVIL is closed(0) or open(1) *Switched due to pullup
 const int hvilPin   = 21;       // Stores the input pin number for HVIL
                                 // Alarm Data
 alarmData alarmStatus;          // Declare an Alarm data structure - defined in Alarm.h
@@ -252,7 +252,7 @@ void setup() {
 
 
     /*Initialize Alarm */
-    alarmStatus = {&hVoltInterlock, &overCurrent, &hVoltOutofRange, &acknowledgeFlag};    // Initialize alarm data struct with alarm data
+    alarmStatus = {&hVoltInterlock, &overCurrent, &hVoltOutofRange, &acknowledgeFlag, &hVIL};    // Initialize alarm data struct with alarm data
     alarmTCB.task = &alarmTask;                                         // Store a pointer to the alarm task update function in the TCB
     alarmTCB.taskDataPtr = &alarmStatus;
 

@@ -20,6 +20,7 @@ typedef struct alarmTaskData {
     byte* overCurrent;              // 0 for alarm not active, 1, for active not acknowledged          
     byte* hVoltOutofRange;          // and 2 for active acknowledged
     bool* acknowledgeFlag;
+    bool* hVIL;
 } alarmData;
 
 
