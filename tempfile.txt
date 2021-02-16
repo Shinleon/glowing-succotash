@@ -1,2 +1,4 @@
 "tempfile" 
-Also I basically wiped the alarms task... and changed the scheduler to be a linked list that has a paired int list of whether or not a task should run. Idk if that was how it was supposed to be implemented tho...
+I rewrote the alarm task
+but we need to make sure that if the alarm is in state 2 (active_ack) it is displayed that way even when we switch screen around.
+Not sure how.
