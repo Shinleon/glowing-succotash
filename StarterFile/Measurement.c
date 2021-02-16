@@ -7,8 +7,8 @@
 #include "Arduino.h"
 
 
-float read_range = 1023;
-
+float read_range_high = 970;
+float read_range_low = 13;
 /**************************************************************************
   * Function name: updateHVIL
   * Function inputs: bool* hvilReading, const byte* pin
@@ -34,9 +34,9 @@ void updateHVIL ( bool* hvilReading, const int* pin ) {
 void updateTemperature ( float* temperatureReading, const byte* pin ) {
     float lowest_temp = -10;
     float highest_temp = 45;
-    float slope = (highest_temp-lowest_temp)/read_range;
-    float scaling = slope*analogRead(*pin)+lowest_temp; 
-    *temperatureReading = scaling;
+    //float slope = (highest_temp-lowest_temp)/read_range;
+    //float scaling = slope*analogRead(*pin)+lowest_temp; 
+    *temperatureReading = (((analogRead(*pin) - read_range_low)*(highest_temp-lowest_temp))/(read_range_high - read_range_low))+lowest_temp;
 }
 
 /*******************************************************************
@@ -50,9 +50,11 @@ void updateTemperature ( float* temperatureReading, const byte* pin ) {
 void updateHvCurrent ( float* currentReading, const byte* pin  ) {
     float lowest_curr = -25;
     float highest_curr = 25;
-    float slope = (highest_curr-lowest_curr)/read_range;
-    float scaling = slope*analogRead(*pin)+lowest_curr; 
-    *currentReading = scaling;
+    //float slope = (highest_curr-lowest_curr)/read_range;
+    //float scaling = slope*analogRead(*pin)+lowest_curr; 
+    *currentReading =(((analogRead(*pin) - read_range_low)*(highest_curr-lowest_curr))/(read_range_high - read_range_low))+lowest_curr;
+    
+    
 }
 /********************************************************************
   * Function name: updateHvVoltage
@@ -63,11 +65,13 @@ void updateHvCurrent ( float* currentReading, const byte* pin  ) {
   * Author(s): Leonard Shin; Leika Yamada
   *******************************************************************/
 void updateHvVoltage ( float* voltageReading, const byte* pin  ) {
-    float lowest_volt = 0;
+    //float lowest_volt = 0;
     float highest_volt = 450;
-    float slope = (highest_volt-lowest_volt)/read_range;
-    float scaling = slope*analogRead(*pin)+lowest_volt; 
-    *voltageReading = scaling;
+    //float slope = (highest_volt-lowest_volt)/read_range;
+    //float scaling = slope*analogRead(*pin)+lowest_volt; 
+    //*voltageReading = scaling;
+    
+    *voltageReading = abs(analogRead(*pin) - read_range_low)*(highest_volt/read_range_high);
 }
 
 /**********************************************************************
