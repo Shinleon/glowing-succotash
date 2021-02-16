@@ -11,7 +11,7 @@
   *                       to cycle between [0, 1, 2] every second
   * Author(s): Leonard Shin; Leika Yamada
   *****************************************************************/
-void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock, bool* acknowledgeFlag ) {
+void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock, bool* acknowledgeFlag, bool*hVIL ) {
     // 
     // 
     // extern byte clockTick;
@@ -26,6 +26,10 @@ void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock, bool* acknowledg
     //}
     if(*acknowledgeFlag == 1 && *hVoltInterlock == ACTIVE_NO_ACK ){
           *hVoltInterlock = ACTIVE_ACK;
+          *acknowledgeFlag = 0;
+    }
+    else if( *hVIL == 0 ){
+        *hVoltInterlock = NOT_ACTIVE;
     }
 }
 
@@ -106,9 +110,9 @@ void alarmTask ( void* mData ) {
     alarmData* data = (alarmData*) mData;
     
     /* Update all sensors */
-    updateHVoltInterlockAlarm(data->hVoltInterlock, data->acknowledgeFlag);
-    updateOverCurrent(data->current, data->overCurrent, data->acknowledgeFlag);
-    updateHVoltOutofRange(data->voltage, data->hVoltOutofRange, data->acknowledgeFlag);
+    updateHVoltInterlockAlarm(data->hVoltInterlock, data->acknowledgeFlag, data->hVIL);
+    updateOverCurrent(data->overCurrent, data->acknowledgeFlag);
+    updateHVoltOutofRange(data->hVoltOutofRange, data->acknowledgeFlag);
     
     return;
 }

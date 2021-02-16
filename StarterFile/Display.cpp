@@ -563,37 +563,37 @@ void displayTask ( void* dispData ) {
        updateDisplay(data->contactorState, data->contactorAck);
     
                                                                                           // Check if any buttons are pressed, then display the cooresponding screen
-    if ( measureButton == true ){
+        if ( measureButton == true ){
       
-        displayMeasurementScreen(data->hVIL);
+            displayMeasurementScreen(data->hVIL);
                                                                                           // Reset measure button to be false, so code does not repeatedly execute
-        measureButton = false;  
-    }
-    else if ( alarmButton == true ){
+            measureButton = false;  
+        }
+        else if ( alarmButton == true ){
       
-        displayAlarmScreen();
+            displayAlarmScreen();
                                                                                           // Reset alarm button to be false, so code does not repeatedly execute
-        alarmButton = false;  
-    }
-    else if ( batteryButton == true ){
+            alarmButton = false;  
+        }
+        else if ( batteryButton == true ){
       
-        displayBatteryScreen(data->contactorAck);
+            displayBatteryScreen(data->contactorAck);
                                                                                           // Reset measure button to be false, so code does not repeatedly execute
-        batteryButton = false;  
+            batteryButton = false;  
+        }
     }
-}
                                                                                           // Check the current screen, then update the values on those screens
     if( currentScreen == MEASURE ){
       
-      updateMeasurementDisplay(data->stateOfCharge, data->temperature, data->hvCurrent, data->hvVoltage, data->hVIL);  
+        updateMeasurementDisplay(data->stateOfCharge, data->temperature, data->hvCurrent, data->hvVoltage, data->hVIL);  
     }
     else if( currentScreen == ALARM ){
       
-      updateAlarmDisplay(data->hVoltInterlock, data->hVoltOutofRange, data->overCurrent);
+        updateAlarmDisplay(data->hVoltInterlock, data->hVoltOutofRange, data->overCurrent);
     }
     else{
       
-      updateBatteryDisplay(data->contactorState);
+        updateBatteryDisplay(data->contactorState);
     } 
   return;
 }
