@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include "Alarm.h"
 #include "Arduino.h"
 
@@ -11,26 +12,16 @@
   *                       to cycle between [0, 1, 2] every second
   * Author(s): Leonard Shin; Leika Yamada
   *****************************************************************/
-void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock, bool* acknowledgeFlag, bool*hVIL ) {
-    // 
-    // 
-    // extern byte clockTick;
-    //if( clockTick % 3 == 0 ){
-      //  *hVoltInterlock = NOT_ACTIVE;
-   // }
-   // else if ( clockTick %3 == 1 ){
-    //    *hVoltInterlock = ACTIVE_NO_ACK;
-    //}
-    //else{
-    //    *hVoltInterlock = ACTIVE_ACK;
-    //}
+void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock, bool* acknowledgeFlag, bool* hVIL ) {
+    if( *hVIL == 0 ){
+        *hVoltInterlock = NOT_ACTIVE;
+    }
+    
     if(*acknowledgeFlag == 1 && *hVoltInterlock == ACTIVE_NO_ACK ){
           *hVoltInterlock = ACTIVE_ACK;
           *acknowledgeFlag = 0;
     }
-    else if( *hVIL == 0 ){
-        *hVoltInterlock = NOT_ACTIVE;
-    }
+    
 }
 
 /**********************************************************************

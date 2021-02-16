@@ -221,10 +221,22 @@ void serialMonitor() {
   * Author(s): Leonard Shin, Leika Yamada
   *******************************************************************/
 void setup() {  
+
+    /*Initailize input and output pins*/
+    pinMode(hvilPin, INPUT_PULLUP);
+    pinMode(contactorLED, OUTPUT);
+    pinMode(tempPin, INPUT_PULLUP);
+    pinMode(currPin, INPUT_PULLUP);
+    pinMode(voltPin, INPUT_PULLUP);
+    
     /*Initialize the Global time base Timer*/
     Timer1.initialize(100000);
     Timer1.attachInterrupt(timerISR);
     Timer1.start();
+    
+    /*Initailize HVIL Timer*/
+    attachInterrupt(digitalPinToInterrupt(hvilPin), hvilISR , RISING);
+    interrupts();
        
     /* Initialize Measurement & Sensors*/
     measure = {&hVIL, &hvilPin, &temperature, &tempPin, &hvCurrent, &currPin, &hvVoltage, &voltPin};  // Initailize measure data struct with data
@@ -252,7 +264,7 @@ void setup() {
 
 
     /*Initialize Alarm */
-    alarmStatus = {&hVoltInterlock, &hvCurrent, &overCurrent, &hvVoltage, &hVoltOutofRange, &acknowledgeFlag};    // Initialize alarm data struct with alarm data
+    alarmStatus = {&hVoltInterlock, &hvCurrent, &overCurrent, &hvVoltage, &hVoltOutofRange, &acknowledgeFlag, &hVIL};    // Initialize alarm data struct with alarm data
     alarmTCB.task = &alarmTask;                                         // Store a pointer to the alarm task update function in the TCB
     alarmTCB.taskDataPtr = &alarmStatus;
 
@@ -279,17 +291,6 @@ void setup() {
     displayTCB.next = NULL;
 
 
-
-    /*Initailize input and output pins*/
-    pinMode(hvilPin, INPUT_PULLUP);
-    pinMode(contactorLED, OUTPUT);
-    pinMode(tempPin, INPUT_PULLUP);
-    pinMode(currPin, INPUT_PULLUP);
-    pinMode(voltPin, INPUT_PULLUP);
-
-    /*Initailize HVIL Timer*/
-    attachInterrupt(digitalPinToInterrupt(hvilPin), hvilISR , RISING);
-    interrupts();
 
 
     /*Initialize serial communication*/
