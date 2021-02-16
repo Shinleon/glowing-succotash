@@ -26,6 +26,7 @@ void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock, bool* acknowledg
     //}
     if(*acknowledgeFlag == 1 && *hVoltInterlock == ACTIVE_NO_ACK ){
           *hVoltInterlock = ACTIVE_ACK;
+          *acknowledgeFlag = 0;
     }
     else if( *hVIL == 0 ){
         *hVoltInterlock = NOT_ACTIVE;
