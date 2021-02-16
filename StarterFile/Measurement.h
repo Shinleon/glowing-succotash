@@ -18,8 +18,11 @@ typedef struct measurementTaskData {      // Contains Measurement Data
     bool* hvilStatus;
     const int* hvilPin;
     float* temperature;
+    const byte* tempPin;
   	float* hvCurrent;
+    const byte* currPin;
 	  float* hvVoltage;
+    const byte* voltPin;
 } measurementData;
 
 

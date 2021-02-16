@@ -53,9 +53,12 @@ TCB displayTCB;                 // Declare display TCB   [Display should be last
 
                                 // Measurement Data
 measurementData measure;        // Declare measurement data structure - defined in Measurement.h
-float hvCurrent     = 0;        // Stores the measured current in the HVIL
-float hvVoltage     = 0;        // Stores the measured voltage in the HVIL
 float temperature   = 0;        // Stores the measured temperature of the system
+byte tempPin =  A11;            // <- That's an A-eleven, not an all
+float hvCurrent     = 0;        // Stores the measured current in the HVIL
+byte currPin = A12;
+float hvVoltage     = 0;        // Stores the measured voltage in the HVIL
+byte voltPin = A13;
 bool hVIL           = 0;        // Stores whether or not the HVIL is closed(1) or open(0)
 const int hvilPin   = 21;       // Stores the input pin number for HVIL
                                 // Alarm Data
@@ -75,17 +78,18 @@ int contactorLED = 53;          // Store the output pin for the contactor
 bool contactorLocal = contactorState; // initialize local to be same as state
 bool contactorAck;
 
+int runTask[5] = {1, 1, 1, 1, 1};  //Designate if the tasks should be run
 
 displayData displayUpdates;                                     // Display Data structure
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);   // LCD touchscreen
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);              // Touch screen input object
-
+                                                                         
+/*    //No longer necessary
 byte clockTick = 0;                                             // Keep track real time, seconds between 0 and 18
 
-                                                                                           
-int taskNumber = 5;                                                                             
+int taskNumber = 5;    
 TCB* tasks[5]  = {&measurementTCB, &stateOfChargeTCB, &contactorTCB, &alarmTCB, &displayTCB};   // Make an array of 5 TCB tasks
-
+*/
 
 Elegoo_GFX_Button buttons[3];                                 // Create an array of button objects for the display
 char buttonlabels[3][9]   = {"Measures", "Alarms", "Battery"};  
@@ -138,22 +142,18 @@ void loop() {
   * Author(s): Leonard Shin, Leika Yamada
   ******************************************************************************/
 void scheduler() {
-  //TODO
-   //unsigned long time_2 = millis();                                                              // Measures task start time
-        //if(time_2 - time_1 > 1000){
-        // time_1 = time_2;
-          for( int i = 0; i < taskNumber/* - 1*/; i++ )                                                           
-          {
-            tasks[i]->task(tasks[i]->taskDataPtr);                                                              // Call all 5 tasks, measurement, SOC, contactor, alarm, display
-          }
-        //clockTick = ( clockTick + 1 ) % 18;                                                           // Get clock tick 0 - 18 to keep system in real time
-        //}
-        // tasks[4]->task(tasks[4]->taskDataPtr); 
-        /*serialMonitor();*/                                                                          // Uncomment this line for debugging
-        //unsigned long time_2 = millis();                                                            // Measures task end time
-        //unsigned long time_3 = 1000 - ( time_2 - time_1 );                                          // Calculates how much to sleep in millisec, for tasks to execute in 1 sec. intervals
-        //delay(time_3);
+    TCB* curr = &measurementTCB;
+    int counter = 0;
+    while(curr != NULL)
+    {
+        if(runTask[counter] == 1)
+        {
+            curr->task(curr->taskDataPtr);
+        }
+        curr = curr->next;
+    }
 }
+
 /******************************************************************************
   * Function name:    timerISR
   * Function inputs:  void
@@ -189,8 +189,6 @@ void serialMonitor() {
   
       Serial.print("My State of Charge is: ");
       Serial.println(SOC, DEC);
-      Serial.print("My clock is: ");
-      Serial.print(clockTick, DEC);
       Serial.print("\n");
 
       Serial.print("My HVIL_alarm is: ");
@@ -227,20 +225,15 @@ void setup() {
     Timer1.start();
        
     /* Initialize Measurement & Sensors*/
-    measure = {&hVIL, &hvilPin, &temperature, &hvCurrent, &hvVoltage};  // Initailize measure data struct with data
+    measure = {&hVIL, &hvilPin, &temperature, &tempPin, &hvCurrent, &currPin, &hvVoltage, &voltPin};  // Initailize measure data struct with data
     measurementTCB.task = &measurementTask;                             // Store a pointer to the measurementTask update function in the TCB
     measurementTCB.taskDataPtr = &measure;                                            
-    measurementTCB.next = NULL;
-    measurementTCB.prev = NULL;
 
    
     /*Initialize Display*/
     displayUpdates = {&hvilPin, &contactorState, &contactorLED, &hvCurrent, &hvVoltage, &temperature, &hVIL, &hVoltInterlock, &overCurrent, &hVoltOutofRange, &stateOfCharge, &contactorAck};        // Initialize display data struct with data    
     displayTCB.task = &displayTask;                                     // Store a pointer to the displayTask update function in the TCB
     displayTCB.taskDataPtr = &displayUpdates;
-    displayTCB.next = NULL;
-    displayTCB.prev = NULL;
-
  
     /*Initialize Touch Input*/
     measureButton = 1;                                                  // Initalize the measure button as pressed to start display with measure screen
@@ -254,29 +247,43 @@ void setup() {
                     &contactorAck, &contactorLED, &hVoltInterlock};                    
     contactorTCB.task = &contactorTask;                                 // Store a pointer to the contactor task update function in the TCB                             
     contactorTCB.taskDataPtr = &contactState;
-    contactorTCB.next = NULL;
-    contactorTCB.prev = NULL;
 
 
     /*Initialize Alarm */
     alarmStatus = {&hVoltInterlock, &overCurrent, &hVoltOutofRange};    // Initialize alarm data struct with alarm data
     alarmTCB.task = &alarmTask;                                         // Store a pointer to the alarm task update function in the TCB
     alarmTCB.taskDataPtr = &alarmStatus;
-    alarmTCB.next = NULL;
-    alarmTCB.prev = NULL;
 
     
     /*Initialize SOC*/
     chargeState = {};                                               // Initialize state of charge data struct with state of charge boolean
     stateOfChargeTCB.task = &stateOfChargeTask;                         // Store a pointer to the soc task update function in the TCB
     stateOfChargeTCB.taskDataPtr = &chargeState;
-    stateOfChargeTCB.next = NULL;
-    stateOfChargeTCB.prev = NULL;
+
+    /*Link each task to the next to make the task queue*/
+    measurementTCB.prev = NULL;
+    measurementTCB.next = &stateOfChargeTCB;
+    
+    stateOfChargeTCB.prev = &measurementTCB;
+    stateOfChargeTCB.next = &alarmTCB;
+    
+    alarmTCB.prev = &stateOfChargeTCB;
+    alarmTCB.next = &contactorTCB;
+    
+    contactorTCB.prev = &alarmTCB;
+    contactorTCB.next = &displayTCB;
+    
+    displayTCB.prev = &contactorTCB;
+    displayTCB.next = NULL;
+
 
 
     /*Initailize input and output pins*/
     pinMode(hvilPin, INPUT_PULLUP);
     pinMode(contactorLED, OUTPUT);
+    pinMode(tempPin, INPUT_PULLUP);
+    pinMode(currPin, INPUT_PULLUP);
+    pinMode(voltPin, INPUT_PULLUP);
 
     /*Initailize HVIL Timer*/
     attachInterrupt(digitalPinToInterrupt(hvilPin), hvilISR , RISING);

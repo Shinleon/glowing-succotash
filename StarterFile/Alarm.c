@@ -14,7 +14,7 @@
 void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock ) {
     // 
     // 
-    extern byte clockTick;
+    // extern byte clockTick;
     //if( clockTick % 3 == 0 ){
       //  *hVoltInterlock = NOT_ACTIVE;
    // }
@@ -36,16 +36,16 @@ void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock ) {
   *********************************************************************/
 void updateOverCurrent ( byte* overCurrent ) {
 
-    extern byte clockTick;
-    if( clockTick/2 % 3 == 0 ){
-        *overCurrent = NOT_ACTIVE;
-    }
-    else if ( clockTick/2 %3 == 1 ){
-        *overCurrent = ACTIVE_NO_ACK;
-    }
-    else{
-        *overCurrent = ACTIVE_ACK;
-    }
+    //extern byte clockTick;
+    //if( clockTick/2 % 3 == 0 ){
+    //    *overCurrent = NOT_ACTIVE;
+    //}
+    //else if ( clockTick/2 %3 == 1 ){
+    //    *overCurrent = ACTIVE_NO_ACK;
+    //}
+    //else{
+    //    *overCurrent = ACTIVE_ACK;
+    //}
 }
 
 /************************************************************************
@@ -58,16 +58,16 @@ void updateOverCurrent ( byte* overCurrent ) {
   **********************************************************************/
 void updateHVoltOutofRange ( byte* hVoltOutofRange ) {
     
-    extern byte clockTick;
-    if( clockTick/3 % 3 == 0 ){
-        *hVoltOutofRange = NOT_ACTIVE;
-    }
-    else if ( clockTick/3 %3 == 1 ){
-        *hVoltOutofRange = ACTIVE_NO_ACK;
-    }
-    else{
-        *hVoltOutofRange = ACTIVE_ACK;
-    }
+    //extern byte clockTick;
+    //if( clockTick/3 % 3 == 0 ){
+    //    *hVoltOutofRange = NOT_ACTIVE;
+    //}
+    //else if ( clockTick/3 %3 == 1 ){
+    //    *hVoltOutofRange = ACTIVE_NO_ACK;
+    //}
+    //else{
+    //    *hVoltOutofRange = ACTIVE_ACK;
+    //}
 }
 
 /*****************************************************************

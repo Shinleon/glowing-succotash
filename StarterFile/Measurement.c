@@ -1,8 +1,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <pin_magic.h>
+#include <registers.h>
 #include "Measurement.h"
 #include "Arduino.h"
 
+
+float read_range = 1023;
 
 /**************************************************************************
   * Function name: updateHVIL
@@ -26,18 +31,12 @@ void updateHVIL ( bool* hvilReading, const int* pin ) {
   *                       [-10, 5, 25], switching value every 1 sec
   * Author(s):  Leonard Shin; Leika Yamada
   **************************************************************************/
-void updateTemperature ( float* temperatureReading ) {
-  
-    extern byte clockTick;
-    if ( clockTick % 3 == 0 ) {
-        *temperatureReading = -10;
-    }
-    else if ( clockTick % 3 == 1 ) {
-        *temperatureReading = 5;
-    }
-    else {
-        *temperatureReading = 25;
-    }
+void updateTemperature ( float* temperatureReading, const byte* pin ) {
+    float lowest_temp = -10;
+    float highest_temp = 45;
+    float slope = (highest_temp-lowest_temp)/read_range;
+    float scaling = slope*analogRead(*pin)+lowest_temp; 
+    *temperatureReading = scaling;
 }
 
 /*******************************************************************
@@ -48,18 +47,12 @@ void updateTemperature ( float* temperatureReading ) {
   *                       [-20, 0, 20], switching value every 2 sec
   *  Author(s):  Leonard Shin; Leika Yamada
   ******************************************************************/
-void updateHvCurrent ( float* currentReading ) {
-  
-    extern byte clockTick;
-    if (clockTick / 2 % 3 == 0) {
-        *currentReading = -20;
-    }
-    else if (clockTick / 2 % 3 == 1) {
-        *currentReading = 0;
-    }
-    else {
-        *currentReading = 20;
-    }
+void updateHvCurrent ( float* currentReading, const byte* pin  ) {
+    float lowest_curr = -25;
+    float highest_curr = 25;
+    float slope = (highest_curr-lowest_curr)/read_range;
+    float scaling = slope*analogRead(*pin)+lowest_curr; 
+    *currentReading = scaling;
 }
 /********************************************************************
   * Function name: updateHvVoltage
@@ -69,18 +62,12 @@ void updateHvCurrent ( float* currentReading ) {
   *                       [10, 150, 450], switching value every 3 sec
   * Author(s): Leonard Shin; Leika Yamada
   *******************************************************************/
-void updateHvVoltage ( float* voltageReading ) {
-
-    extern byte clockTick;
-    if (clockTick / 3 % 3 == 0) {
-        *voltageReading = 10;
-    }
-    else if (clockTick / 3 % 3 == 1) {
-        *voltageReading = 150;
-    }
-    else {
-        *voltageReading = 450;
-    }
+void updateHvVoltage ( float* voltageReading, const byte* pin  ) {
+    float lowest_volt = 0;
+    float highest_volt = 450;
+    float slope = (highest_volt-lowest_volt)/read_range;
+    float scaling = slope*analogRead(*pin)+lowest_volt; 
+    *voltageReading = scaling;
 }
 
 /**********************************************************************
@@ -96,9 +83,9 @@ void measurementTask ( void* mData ) {
   
     // Update all sensors
     updateHVIL(data->hvilStatus, data->hvilPin);
-    updateTemperature(data->temperature);
-    updateHvCurrent(data->hvCurrent);
-    updateHvVoltage(data->hvVoltage);
+    updateTemperature(data->temperature, data->tempPin);
+    updateHvCurrent(data->hvCurrent, data->currPin);
+    updateHvVoltage(data->hvVoltage, data->voltPin);
   
     return;
 }
