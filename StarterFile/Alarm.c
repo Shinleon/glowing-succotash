@@ -11,7 +11,7 @@
   *                       to cycle between [0, 1, 2] every second
   * Author(s): Leonard Shin; Leika Yamada
   *****************************************************************/
-void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock ) {
+void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock, bool* acknowledgeFlag ) {
     // 
     // 
     // extern byte clockTick;
@@ -24,6 +24,9 @@ void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock ) {
     //else{
     //    *hVoltInterlock = ACTIVE_ACK;
     //}
+    if(*acknowledgeFlag == 1 && *hVoltInterlock == ACTIVE_NO_ACK ){
+          *hVoltInterlock = ACTIVE_ACK;
+    }
 }
 
 /**********************************************************************
@@ -34,7 +37,7 @@ void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock ) {
   *                       to cycle between [0, 1, 2] every two seconds
   * Author(s): Leonard Shin; Leika Yamada
   *********************************************************************/
-void updateOverCurrent ( byte* overCurrent ) {
+void updateOverCurrent ( byte* overCurrent, bool* acknowledgeFlag ) {
 
     //extern byte clockTick;
     //if( clockTick/2 % 3 == 0 ){
@@ -46,6 +49,9 @@ void updateOverCurrent ( byte* overCurrent ) {
     //else{
     //    *overCurrent = ACTIVE_ACK;
     //}
+    if(*acknowledgeFlag == 1 && *overCurrent == ACTIVE_NO_ACK ){
+          *overCurrent = ACTIVE_ACK;
+    }
 }
 
 /************************************************************************
@@ -56,7 +62,7 @@ void updateOverCurrent ( byte* overCurrent ) {
   *                       to cycle between [0, 1, 2] every three seconds
   * Author(s): Leonard Shin; Leika Yamada
   **********************************************************************/
-void updateHVoltOutofRange ( byte* hVoltOutofRange ) {
+void updateHVoltOutofRange ( byte* hVoltOutofRange, bool* acknowledgeFlag ) {
     
     //extern byte clockTick;
     //if( clockTick/3 % 3 == 0 ){
@@ -68,6 +74,9 @@ void updateHVoltOutofRange ( byte* hVoltOutofRange ) {
     //else{
     //    *hVoltOutofRange = ACTIVE_ACK;
     //}
+    if(*acknowledgeFlag == 1 && *hVoltOutofRange == ACTIVE_NO_ACK ){
+          *hVoltOutofRange = ACTIVE_ACK;
+    }
 }
 
 /*****************************************************************
@@ -83,9 +92,9 @@ void alarmTask ( void* mData ) {
     alarmData* data = (alarmData*) mData;
     
     /* Update all sensors */
-    updateHVoltInterlockAlarm(data->hVoltInterlock);
-    updateOverCurrent(data->overCurrent);
-    updateHVoltOutofRange(data->hVoltOutofRange);
+    updateHVoltInterlockAlarm(data->hVoltInterlock, data->acknowledgeFlag);
+    updateOverCurrent(data->overCurrent, data->acknowledgeFlag);
+    updateHVoltOutofRange(data->hVoltOutofRange, data->acknowledgeFlag);
     
     return;
 }

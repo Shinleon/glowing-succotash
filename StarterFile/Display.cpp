@@ -488,7 +488,7 @@ void updateDisplay (bool* contactorState){
     *                       the user can navigate away from the alarm screen.
     * Author(s): Leonard Shin, Leika Yamada
     ******************************************************************************/
-void checkAlarmButton (volatile byte* hVoltInterlock, byte* hVoltOutofRange, byte* overCurrent){
+void checkAlarmButton (volatile byte* hVoltInterlock, byte* hVoltOutofRange, byte* overCurrent, bool* acknowledgeFlag){
   
     digitalWrite(13, HIGH);
     TSPoint p = ts.getPoint();                                                        // Capture touchscreen x, y, z pressure coordinates
@@ -519,17 +519,18 @@ void checkAlarmButton (volatile byte* hVoltInterlock, byte* hVoltOutofRange, byt
             //batteryButtons[b].drawButton(true);                                     // Draw inverted version of button to indicate it was pressed
 
                                                                                       // alarm button is pressed,  acknowledge all alarms
-            if (alarmButton == 0) {
-                if(*hVoltInterlock == ACTIVE_NO_ACK){
-                    *hVoltInterlock = ACTIVE_ACK;
-                  }
-                if(*hVoltOutofRange == ACTIVE_NO_ACK){
-                    *hVoltOutofRange = ACTIVE_ACK;
-                  }
-                if(*overCurrent == ACTIVE_NO_ACK){
-                    *overCurrent = ACTIVE_ACK;
-                }
-            }
+            //if (alarmButton == 0) {
+                //if(*hVoltInterlock == ACTIVE_NO_ACK){
+                //    *hVoltInterlock = ACTIVE_ACK;
+                //  }
+                //if(*hVoltOutofRange == ACTIVE_NO_ACK){
+                //    *hVoltOutofRange = ACTIVE_ACK;
+                //  }
+                //if(*overCurrent == ACTIVE_NO_ACK){
+                //    *overCurrent = ACTIVE_ACK;
+                //}
+                *acknowledgeFlag = 1;
+            //}
         }  
 }
 
@@ -554,7 +555,7 @@ void displayTask ( void* dispData ) {
           if(ALARM != currentScreen){
               displayAlarmScreen();
           }
-          checkAlarmButton(data->hVoltInterlock, data->overCurrent, data->hVoltOutofRange);
+          checkAlarmButton(data->hVoltInterlock, data->overCurrent, data->hVoltOutofRange, data->acknowledgeFlag);
       }
     else {
        updateDisplay(data->contactorState);

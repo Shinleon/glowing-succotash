@@ -66,6 +66,7 @@ alarmData alarmStatus;          // Declare an Alarm data structure - defined in 
 volatile byte hVoltInterlock = 0;   // Store the alarm status for the HVIL alarm
 byte overCurrent;               // Store the overcurretn alarm status
 byte hVoltOutofRange;           // Store alarm status for HV out of range
+bool acknowledgeFlag = 0;
 
                                 // State Of Charge Data
 stateOfChargeData chargeState;  // Declare charge state data structure
@@ -231,7 +232,7 @@ void setup() {
 
    
     /*Initialize Display*/
-    displayUpdates = {&hvilPin, &contactorState, &contactorLED, &hvCurrent, &hvVoltage, &temperature, &hVIL, &hVoltInterlock, &overCurrent, &hVoltOutofRange, &stateOfCharge, &contactorAck};        // Initialize display data struct with data    
+    displayUpdates = {&hvilPin, &contactorState, &contactorLED, &hvCurrent, &hvVoltage, &temperature, &hVIL, &hVoltInterlock, &overCurrent, &hVoltOutofRange, &stateOfCharge, &contactorAck, &acknowledgeFlag};        // Initialize display data struct with data    
     displayTCB.task = &displayTask;                                     // Store a pointer to the displayTask update function in the TCB
     displayTCB.taskDataPtr = &displayUpdates;
  
@@ -250,7 +251,7 @@ void setup() {
 
 
     /*Initialize Alarm */
-    alarmStatus = {&hVoltInterlock, &overCurrent, &hVoltOutofRange};    // Initialize alarm data struct with alarm data
+    alarmStatus = {&hVoltInterlock, &overCurrent, &hVoltOutofRange, &acknowledgeFlag};    // Initialize alarm data struct with alarm data
     alarmTCB.task = &alarmTask;                                         // Store a pointer to the alarm task update function in the TCB
     alarmTCB.taskDataPtr = &alarmStatus;
 
