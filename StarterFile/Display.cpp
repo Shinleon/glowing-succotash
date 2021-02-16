@@ -389,7 +389,7 @@ void updateAlarmDisplay (volatile byte* hVoltInterlock, byte* hVoltOutofRange, b
     *                       the contactorState variable.
     * Author(s): Leonard Shin, Leika Yamada
     ******************************************************************************/
-void updateDisplay (bool* contactorState){
+void updateDisplay (bool* contactorState, bool* contactorAck){
   
     digitalWrite(13, HIGH);
     TSPoint p = ts.getPoint();                                                        // Capture touchscreen x, y, z pressure coordinates
@@ -425,12 +425,14 @@ void updateDisplay (bool* contactorState){
 
                                                                                       // OFF button is pressed,  update contactor to open
             if (b == 0) {
-                *contactorState = 0;
+                //*contactorState = 0;
+                *contactorAck = 0;
             }
         
                                                                                       // ON button is pressed, update contactor to closed
             if (b == 1) {
-                *contactorState = 1;
+                //*contactorState = 1;
+                *contactorAck = 1;
             }
         
         /*delay(100); uncomment to debounce UI*/
@@ -558,7 +560,7 @@ void displayTask ( void* dispData ) {
           checkAlarmButton(data->hVoltInterlock, data->overCurrent, data->hVoltOutofRange, data->acknowledgeFlag);
       }
     else {
-       updateDisplay(data->contactorState);
+       updateDisplay(data->contactorState, data->contactorAck);
     
                                                                                           // Check if any buttons are pressed, then display the cooresponding screen
     if ( measureButton == true ){

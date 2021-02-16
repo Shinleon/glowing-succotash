@@ -77,7 +77,7 @@ contactorData contactState;
 bool contactorState = 0;        
 int contactorLED = 53;          // Store the output pin for the contactor
 bool contactorLocal = contactorState; // initialize local to be same as state
-bool contactorAck;
+bool contactorAck = 0;
 
 int runTask[5] = {1, 1, 1, 1, 1};  //Designate if the tasks should be run
 
@@ -177,6 +177,7 @@ void timerISR() {   // interrupt service routine
 void hvilISR() {   // interrupt service routine for the hvil
     hVoltInterlock = ACTIVE_NO_ACK;
     digitalWrite(contactorLED, LOW);
+    contactorState = 0;
 }
 /******************************************************************************
   * Function name:    serialMonitor

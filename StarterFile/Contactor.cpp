@@ -15,6 +15,12 @@
 void updateContactor ( bool* contactorStatus, bool* local, bool* ack, int* contactorLED, volatile byte* hvilAlarm) {
     // Need to acknowledge change if it was changed
     noInterrupts();
+    if(*ack == 1 && *hvilAlarm == NOT_ACTIVE){
+          *contactorStatus = 1;
+      }
+    else{
+          *contactorStatus = 0;
+      }
     if( *contactorStatus != *local ){
         *local = *contactorStatus;
         *ack = true; 
