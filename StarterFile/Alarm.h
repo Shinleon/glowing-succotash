@@ -22,6 +22,7 @@ typedef struct alarmTaskData {
     float* voltage;        
     byte* hVoltOutofRange;          // and 2 for active acknowledged
     bool* acknowledgeFlag;
+    bool* hVIL;
 } alarmData;
 
 

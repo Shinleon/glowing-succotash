@@ -111,8 +111,8 @@ void alarmTask ( void* mData ) {
     
     /* Update all sensors */
     updateHVoltInterlockAlarm(data->hVoltInterlock, data->acknowledgeFlag, data->hVIL);
-    updateOverCurrent(data->overCurrent, data->acknowledgeFlag);
-    updateHVoltOutofRange(data->hVoltOutofRange, data->acknowledgeFlag);
+    updateOverCurrent(data->current, data->overCurrent, data->acknowledgeFlag);
+    updateHVoltOutofRange(data->voltage, data->hVoltOutofRange, data->acknowledgeFlag);
     
     return;
 }
