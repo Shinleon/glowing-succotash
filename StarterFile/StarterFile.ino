@@ -64,8 +64,8 @@ const int hvilPin   = 21;       // Stores the input pin number for HVIL
                                 // Alarm Data
 alarmData alarmStatus;          // Declare an Alarm data structure - defined in Alarm.h
 volatile byte hVoltInterlock = 0;   // Store the alarm status for the HVIL alarm
-byte overCurrent;               // Store the overcurretn alarm status
-byte hVoltOutofRange;           // Store alarm status for HV out of range
+byte overCurrent = 0;               // Store the overcurretn alarm status
+byte hVoltOutofRange = 0;          // Store alarm status for HV out of range
 bool acknowledgeFlag = 0;
 
                                 // State Of Charge Data
