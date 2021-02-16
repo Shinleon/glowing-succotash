@@ -252,7 +252,7 @@ void setup() {
 
 
     /*Initialize Alarm */
-    alarmStatus = {&hVoltInterlock, &overCurrent, &hVoltOutofRange, &acknowledgeFlag};    // Initialize alarm data struct with alarm data
+    alarmStatus = {&hVoltInterlock, &hvCurrent, &overCurrent, &hvVoltage, &hVoltOutofRange, &acknowledgeFlag};    // Initialize alarm data struct with alarm data
     alarmTCB.task = &alarmTask;                                         // Store a pointer to the alarm task update function in the TCB
     alarmTCB.taskDataPtr = &alarmStatus;
 
