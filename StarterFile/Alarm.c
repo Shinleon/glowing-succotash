@@ -41,12 +41,23 @@ void updateOverCurrent (float* curr, byte* overCurrent, bool* acknowledgeFlag ) 
 
     float curr_limit_l = -5;
     float curr_limit_r = 20;
-    if((*curr < curr_limit_l || *curr > curr_limit_r) && *acknowledgeFlag == 0)
-    {
-        *overCurrent = ACTIVE_NO_ACK;
+    if(*acknowledgeFlag == 1 && (*overCurrent == ACTIVE_NO_ACK)){
+        *overCurrent = ACTIVE_ACK;
     }
-    if(*acknowledgeFlag == 1 && *overCurrent == ACTIVE_NO_ACK ){
-          *overCurrent = ACTIVE_ACK;
+    else if((*curr < curr_limit_l || *curr > curr_limit_r))
+    {
+        if(*overCurrent == ACTIVE_ACK)
+        {
+            *overCurrent = ACTIVE_ACK;
+        }
+        else
+        {
+            *overCurrent = ACTIVE_NO_ACK;
+        }
+    }
+    else
+    {
+        *overCurrent = NOT_ACTIVE;
     }
 }
 
@@ -62,12 +73,23 @@ void updateHVoltOutofRange (float* volt, byte* hVoltOutofRange, bool* acknowledg
     
     float volt_limit_l = 280;
     float volt_limit_r = 405;
-    if((*volt < volt_limit_l || *volt > volt_limit_r) && *acknowledgeFlag == 0)
-    {
-        *hVoltOutofRange = ACTIVE_NO_ACK;
+    if(*acknowledgeFlag == 1 && (*hVoltOutofRange == ACTIVE_NO_ACK)){
+        *hVoltOutofRange = ACTIVE_ACK;
     }
-    if(*acknowledgeFlag == 1 && *hVoltOutofRange == ACTIVE_NO_ACK ){
-          *hVoltOutofRange = ACTIVE_ACK;
+    else if((*volt < volt_limit_l || *volt > volt_limit_r))
+    {
+        if(*hVoltOutofRange == ACTIVE_ACK)
+        {
+            *hVoltOutofRange = ACTIVE_ACK;
+        }
+        else
+        {
+            *hVoltOutofRange = ACTIVE_NO_ACK;
+        }
+    }
+    else
+    {
+        *hVoltOutofRange = NOT_ACTIVE;
     }
 }
 

@@ -128,7 +128,7 @@ void loop() {
         {                       //  interrupt (interrupt runs once per global time
                                 //  time base period)
             timeBaseFlag = 0;
-
+            serialMonitor();
             scheduler();    
             
         }                                                         
