@@ -74,13 +74,13 @@ void batteryButtonDisplay (){
     * Function name: alarmButtonDisplay 
     * Function inputs: void
     * Function outputs: void
-    * Function description: Draws two buttons, ON and OFF for the battery screen. 
+    * Function description: Draws the acknowledge button for the alarm screen 
     * Author(s): Leonard Shin, Leika Yamada
     ******************************************************************************/
 void alarmButtonDisplay (){
   
         alarmButtons[0].initButton(&tft, ALARM_BUTTON_X, ALARM_BUTTON_Y,     // Takes input: X,Y,Width,Height,Outline Color, Color, TextColor,
-            ALARM_BUTTON_W, ALARM_BUTTON_H, WHITE, buttoncolors[ONE], BLACK,                                                        // label, and size
+            ALARM_BUTTON_W, ALARM_BUTTON_H, WHITE, buttoncolors[ONE], BLACK, // label, and size
             alarmButtonLabels[0], BUTTON_TEXTSIZE); 
       
         alarmButtons[0].drawButton();
@@ -309,7 +309,7 @@ void updateBatteryDisplay ( bool* contactorState ) {
 
 /*********************************************************************************
     * Function name: updateAlarmDisplay
-    * Function inputs: void
+    * Function inputs: volatile byte* hVoltInterlock, byte* hVoltOutofRange, byte* overCurrent
     * Function outputs: void
     * Function description: Updates the values displayed on the alarm screen. 
     *                       Checks if the local copy is updated to the global copy
@@ -506,13 +506,13 @@ void checkAlarmButton (volatile byte* hVoltInterlock, byte* hVoltOutofRange, byt
         p.y = (tft.height()-map(p.y, TS_MINY, TS_MAXY, tft.height(), 0));
     }
     
-    uint8_t alarmButton = 0;                                                                                  // Check if buttons are pressed
+    uint8_t alarmButton = 0;                                                          // Check if buttons are pressed
       
         if ( alarmButtons[alarmButton].contains(p.x, p.y)) {
             
-            alarmButtons[alarmButton].press(true);                                            // Button is pressed
+            alarmButtons[alarmButton].press(true);                                    // Button is pressed
         } else {
-            alarmButtons[alarmButton].press(false);                                           // Button not pressed
+            alarmButtons[alarmButton].press(false);                                   // Button not pressed
         }
 
         if ( alarmButtons[alarmButton].justReleased() ) { 

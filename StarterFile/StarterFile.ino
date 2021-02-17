@@ -61,36 +61,30 @@ float hvVoltage     = 0;        // Stores the measured voltage in the HVIL
 byte voltPin = A13;
 bool hVIL           = 0;        // Stores whether or not the HVIL is closed(0) or open(1) *Switched due to pullup
 const int hvilPin   = 21;       // Stores the input pin number for HVIL
-                                // Alarm Data
-alarmData alarmStatus;          // Declare an Alarm data structure - defined in Alarm.h
-volatile byte hVoltInterlock = 0;   // Store the alarm status for the HVIL alarm
-byte overCurrent = 0;               // Store the overcurretn alarm status
-byte hVoltOutofRange = 0;          // Store alarm status for HV out of range
+                               
+alarmData alarmStatus;                // Declare an Alarm data structure - defined in Alarm.h
+volatile byte hVoltInterlock = 0;     // Store the alarm status for the HVIL alarm
+byte overCurrent = 0;                 // Store the overcurretn alarm status
+byte hVoltOutofRange = 0;             // Store alarm status for HV out of range
 bool acknowledgeFlag = 0;
 
-                                // State Of Charge Data
-stateOfChargeData chargeState;  // Declare charge state data structure
+                                      // State Of Charge Data
+stateOfChargeData chargeState;        // Declare charge state data structure
 float stateOfCharge = SOC;        
 
-                                // Contactor Data
+                                      // Contactor Data
 contactorData contactState;
 bool contactorState = 0;        
-int contactorLED = 53;          // Store the output pin for the contactor
+int contactorLED = 53;                // Store the output pin for the contactor
 bool contactorLocal = contactorState; // initialize local to be same as state
 bool contactorAck = 0;
 
-int runTask[5] = {1, 1, 1, 1, 1};  //Designate if the tasks should be run
+int runTask[5] = {1, 1, 1, 1, 1};     //Designate if the tasks should be run
 
 displayData displayUpdates;                                     // Display Data structure
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);   // LCD touchscreen
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);              // Touch screen input object
                                                                          
-/*    //No longer necessary
-byte clockTick = 0;                                             // Keep track real time, seconds between 0 and 18
-
-int taskNumber = 5;    
-TCB* tasks[5]  = {&measurementTCB, &stateOfChargeTCB, &contactorTCB, &alarmTCB, &displayTCB};   // Make an array of 5 TCB tasks
-*/
 
 Elegoo_GFX_Button buttons[3];                                 // Create an array of button objects for the display
 char buttonlabels[3][9]   = {"Measures", "Alarms", "Battery"};  
@@ -108,38 +102,38 @@ char batteryButtonLabels[2][4] = {"OFF", "ON"};
 Elegoo_GFX_Button alarmButtons[1];                           // Creates an alarm button array
 char alarmButtonLabels[1][12] = {"Ack. All"};
 
-
-//unsigned long time_1 = 0;
 /*Timer Initialization*/
-volatile bool timeBaseFlag = 0;
-volatile bool myHvilStat = 0;
+volatile bool timeBaseFlag = 0;                              // Global time base flag
+volatile bool myHvilStat = 0;                                // Hvil status
 
-/***********************************************************************************************************************
+/************************************************************************************
   * Function name: loop
-  * Function inputs: Sensor data, touch input
-  * Function outputs: Display data and lights indicating alarm status, contactor status, sensor data, & state of charge
-  * Function description: This is a round robin scheduler to run a series of tasks
-  *                       that create a user interface to a battery management system
+  * Function inputs: void
+  * Function outputs: void
+  * Function description: Display data and lights indicating alarm status, contactor 
+  *                       status, sensor data, & state of charge
+  *                       This is a doubly linked list scheduler to run a series of 
+  *                       tasks that create a user interface to a battery management system
   * Author(s): Leonard Shin, Leika Yamada
-  **********************************************************************************************************************/
+  **********************************************************************************/
 void loop() {
     while( 1 ){
         if( 1 == timeBaseFlag)  // check if timeBaseFlag has been set by the timer
-        {                       //  interrupt (interrupt runs once per global time
-                                //  time base period)
+        {                       // interrupt (interrupt runs once per global time
+                                // time base period)
             timeBaseFlag = 0;
-            serialMonitor();
+            /*serialMonitor();*/// uncomment for debug code
             scheduler();    
             
         }                                                         
     }
+    return;
 }
 /******************************************************************************
-  * Function name:    TODO
+  * Function name:    scheduler
   * Function inputs:  void
   * Function outputs: void
-  * Function description: This displays all of our processes to the serial
-  *                       display. Used for purposes of debugging the system.
+  * Function description: This runs all the tasks calling the doubly linked list.
   * Author(s): Leonard Shin, Leika Yamada
   ******************************************************************************/
 void scheduler() {
@@ -153,6 +147,7 @@ void scheduler() {
         }
         curr = curr->next;
     }
+    return;
 }
 
 /******************************************************************************
@@ -164,20 +159,26 @@ void scheduler() {
   * Author(s): Leonard Shin, Leika Yamada
   ******************************************************************************/
 void timerISR() {   // interrupt service routine
+  
     timeBaseFlag = 1;    // set timerISR flag
+    return;
+    
 }
 /******************************************************************************
   * Function name:    hvilISR
   * Function inputs:  void
   * Function outputs: void
-  * Function description: Set the flag to run the interrupt service routine. Timer 
-  *                       will be set to run once every 100 milliseconds.
+  * Function description: Set hvil alarm status to active not acknowledged. 
+  *                       Turn off contactor. Set contactor state to 0.
   * Author(s): Leonard Shin, Leika Yamada
   ******************************************************************************/
 void hvilISR() {   // interrupt service routine for the hvil
+  
     hVoltInterlock = ACTIVE_NO_ACK;
     digitalWrite(contactorLED, LOW);
     contactorState = 0;
+    return;
+    
 }
 /******************************************************************************
   * Function name:    serialMonitor
@@ -270,7 +271,7 @@ void setup() {
 
     
     /*Initialize SOC*/
-    chargeState = {};                                               // Initialize state of charge data struct with state of charge boolean
+    chargeState = {};                                                   // Initialize state of charge data struct with state of charge boolean
     stateOfChargeTCB.task = &stateOfChargeTask;                         // Store a pointer to the soc task update function in the TCB
     stateOfChargeTCB.taskDataPtr = &chargeState;
 

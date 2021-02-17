@@ -5,31 +5,34 @@
 
 /******************************************************************
   * Function name: updateContactor
-  * Function inputs: bool* contactorStatus, int* contactorLED
+  * Function inputs: bool* contactorStatus, int* contactorLED,
+  *                  volatile byte* hvilAlarm
   * Function outputs: void
   * Function description: updates the conctactor LED's value
   *                       based upon the contactor status (changes
-  *                       the contactor signal into an output)
+  *                       the contactor signal into an output) 
+  *                       Function is not preemptable. If the hvil is
+  *                       open the contactor does not turn on. 
   * Author(s): Leonard Shin, Leika Yamada
   *****************************************************************/
 void updateContactor ( bool* contactorStatus, bool* local, bool* ack, int* contactorLED, volatile byte* hvilAlarm) {
     // Need to acknowledge change if it was changed
-    noInterrupts();
-    if(*ack == 1 && *hvilAlarm == NOT_ACTIVE){
+    noInterrupts();                                                                                                     // Disable interrupts
+    if(*ack == 1 && *hvilAlarm == NOT_ACTIVE){                                                                          // If the alarm has if off, set contactor to 1
           *contactorStatus = 1;
       }
-    if( *contactorStatus != *local ){
+    if( *contactorStatus != *local ){                                                                                   // update the local contactor state
         *local = *contactorStatus;
         //*ack = true; 
     }
-    if( *contactorStatus == 1 && *hvilAlarm == NOT_ACTIVE ){
+    if( *contactorStatus == 1 && *hvilAlarm == NOT_ACTIVE ){                                                            // turn on the contactor if the hvil is not active
         
         digitalWrite(*contactorLED, HIGH);
     }
-    else{
+    else{                                                                                                               // in all other cases turn off the contactor
         digitalWrite(*contactorLED, LOW);
     }
-    interrupts(); 
+    interrupts();                                                                                                       // enable interrupts
     return;
 }
 
