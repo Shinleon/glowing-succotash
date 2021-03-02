@@ -1,17 +1,27 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "StateOfCharge.h"
+#include "Arduino.h"
 
+int volt_length = 5;
+int voltages_soc[] = {200, 250, 300, 350, 400};   // columns
+int temp_length = 4;
+int temperatures_soc[] = {-10, 0, 25, 45};        // rows
+int percent_soc[4][5] = {
+                   {  0,  0,  35, 100, 100},
+                   {  0,  0,  20,  80, 100},
+                   {  0,  0,  10,  60, 100},
+                   {  0,  0,   0,  50, 100}
+                  };
 
-
-float computeSoc(const float* volt, const float* current, const float* temp)
+float computeSoc(float* volt, float* current, float* temp)
 {
     float resistance = 0.5;
-    float open_cVolt = volt + resistance * current; 
-    float left_v = -1; //hold the index of the largest v less than volt
-    float right_v = -1; //hold the index of the smallest v larger than volt
-    float lower_temp = -1; //hold the index of the smallest t larger than temp
-    float upper_temp = -1; //hold the index of the largest t smaller than temp
+    float open_cVolt = *volt + resistance * *current; 
+    int left_v = -1; //hold the index of the largest v less than volt
+    int right_v = -1; //hold the index of the smallest v larger than volt
+    int lower_temp = -1; //hold the index of the smallest t larger than temp
+    int upper_temp = -1; //hold the index of the largest t smaller than temp
 
     for(int i = 0; i < volt_length; i++)
     {
@@ -75,7 +85,7 @@ float computeSoc(const float* volt, const float* current, const float* temp)
                          + percent_soc[upper_temp][left_v];
     
     //interpolate with respect to temperature
-    float temp_ratio = (temp - temperatur_soc[lower_temp])/(temperatures_soc[upper_temp] - temperatures_soc[lower_temp]);
+    float temp_ratio = (*temp - temperatures_soc[lower_temp])/(temperatures_soc[upper_temp] - temperatures_soc[lower_temp]);
     float soc = inter_upper - temp_ratio*(inter_upper - inter_lower);
     return soc;
 }
@@ -89,6 +99,6 @@ float computeSoc(const float* volt, const float* current, const float* temp)
 void stateOfChargeTask ( void* socData ) {
   
     stateOfChargeData* data = (stateOfChargeData*) socData;
-    data->soc = computeSoc(data->vTerminal, data->iTerminal, data->temp);
+    *data->soc = computeSoc(data->vTerminal, data->iTerminal, data->temp);
   return;
 }
