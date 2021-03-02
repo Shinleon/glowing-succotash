@@ -100,8 +100,6 @@ int contactorLED = 53;                // Store the output pin for the contactor
 bool contactorLocal = contactorState; // initialize local to be same as state
 bool contactorAck = 0;
 
-int runTask[6] = {1, 1, 1, 1, 1, 1};     //Designate if the tasks should be run
-
 displayData displayUpdates;                                     // Display Data structure
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);   // LCD touchscreen
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);              // Touch screen input object
@@ -126,7 +124,8 @@ char alarmButtonLabels[1][12] = {"Ack. All"};
 /*Timer Initialization*/
 volatile bool timeBaseFlag = 0;                              // Global time base flag
 volatile bool myHvilStat = 0;                                // Hvil status
-
+TCB* head = null;
+byte tenths = 0;
 /************************************************************************************
   * Function name: loop
   * Function inputs: void
@@ -143,6 +142,7 @@ void loop() {
         {                       // interrupt (interrupt runs once per global time
                                 // time base period)
             timeBaseFlag = 0;
+            tenths  = (tenths + 1) % 50;
             /*serialMonitor();*/// uncomment for debug code
             scheduler();    
             
@@ -158,16 +158,47 @@ void loop() {
   * Author(s): Leonard Shin, Leika Yamada
   ******************************************************************************/
 void scheduler() {
-    TCB* curr = &measurementTCB;
-    int counter = 0;
+    //TCB* curr = &measurementTCB;   // &measurementTCB is the start point
+    // {&measurementTCB, &stateOfChargeTCB, &alarmTCB, &contactorTCB, &EEPROM_shit, &terminalTCB, &displayTCB}
+    TCB* curr = head;
+
     while(curr != NULL)
     {
-        if(runTask[counter] == 1)
-        {
-            curr->task(curr->taskDataPtr);
-        }
-        curr = curr->next;
+        temp = curr->next;         // make temp variable for next
+        temp->prev = null;         // delete back arrow from next
+        curr->next = null;         // delete forard connection on current
+        curr->task(curr->taskDataPtr);
+        curr = temp;               // step forward
     }
+    // reconstruct 
+    head = &measurementTCB;   //always start with measurement task
+    curr = head;
+    
+    curr->next = &stateofChargeTCB;
+    curr->next->prev = curr;
+    curr = curr->next;
+    
+    curr->next = &alarmTCB;
+    curr->next->prev = curr;
+    curr = curr->next;
+    
+    curr->next = &contactorTCB;
+    curr->next->prev = curr;
+    curr = curr->next;
+
+    if(tenths % 50 == 0 )
+    {
+       // Do the EEPROM read/write given that the EEPROM needs to be chaged
+       //   aka. there is a new min or max for any of the measures
+    }
+
+    if(tenths % 10 == 0 )
+    {
+       // Do the EEPROM read/write given that the EEPROM needs to be chaged
+       //   aka. there is a new min or max for any of the measures
+    }
+
+    
     return;
 }
 
