@@ -74,6 +74,7 @@ byte currPin = A12;
 float hvVoltage     = 0;        // Stores the measured voltage in the HVIL
 byte voltPin = A13;
 bool hVIL           = 0;        // Stores whether or not the HVIL is closed(0) or open(1) *Switched due to pullup
+float soc_value = 0;
 const int hvilPin   = 21;       // Stores the input pin number for HVIL
 float minTemp;                  // Stores the minimum temperature
 float maxTemp;                  // Stores the maximum temperature
@@ -327,7 +328,7 @@ void setup() {
 
     
     /*Initialize SOC*/
-    chargeState = {};                                                   // Initialize state of charge data struct with state of charge boolean
+    chargeState = {&hvVoltage, &hvCurrent, &temperature, &soc_value};                                                   // Initialize state of charge data struct with state of charge boolean
     stateOfChargeTCB.task = &stateOfChargeTask;                         // Store a pointer to the soc task update function in the TCBz
     stateOfChargeTCB.taskDataPtr = &chargeState;
 
