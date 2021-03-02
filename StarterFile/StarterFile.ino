@@ -88,6 +88,7 @@ bool currChangemin = false;        // Flag to check if the min current has chang
 bool tempChangemax = false;        // Flag to check if the max temperature has changed
 bool voltChangemax = false;        // Flag to check if the max voltage has changed
 bool currChangemax = false;        // Flag to check if the max current has changed
+bool recover = true;
                                
 alarmData alarmStatus;                // Declare an Alarm data structure - defined in Alarm.h
 volatile byte hVoltInterlock = 0;     // Store the alarm status for the HVIL alarm
@@ -362,7 +363,7 @@ void setup() {
     terminalTCB.taskDataPtr = &terminal;
 
      /*Initialize DataLog Task*/
-    dataLog = {&minTemp, &maxTemp, &minCurrent, &maxCurrent, &minVolt, &maxVolt, &EEPROMReset, &tempChangemin, &voltChangemin, &currChangemin, &tempChangemax, &voltChangemax, &currChangemax};  // Initailize terminal data struct with data
+    dataLog = {&minTemp, &maxTemp, &minCurrent, &maxCurrent, &minVolt, &maxVolt, &EEPROMReset, &tempChangemin, &voltChangemin, &currChangemin, &tempChangemax, &voltChangemax, &currChangemax, &recover};  // Initailize terminal data struct with data
     datalogTCB.task = &dataLogTask;                                                             // Store a pointer to the measurementTask update function in the TCB
     datalogTCB.taskDataPtr = &dataLog;
 
