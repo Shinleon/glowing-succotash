@@ -235,9 +235,9 @@ void  recoverMinMax(float* maxTemp, float* minTemp, float* minCurrent, float* ma
     *minCurrent = ((whole*100 + frac)/100.0);
     }
    /*Current*/
-    sign = (int) EEPROM.read(6);             // MinCurr = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
-    whole = (int) EEPROM.read(7);
-    frac = (int) EEPROM.read(8);
+    sign = (int) EEPROM.read(9);             // MinCurr = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    whole = (int) EEPROM.read(10);
+    frac = (int) EEPROM.read(11);
 
     if (sign == 1){
     *maxCurrent = sign*(-1)*((whole*100 + frac)/100.0);
@@ -245,25 +245,25 @@ void  recoverMinMax(float* maxTemp, float* minTemp, float* minCurrent, float* ma
     *maxCurrent = ((whole*100 + frac)/100.0);
     }
     /*Voltage*/
-    sign = (int) EEPROM.read(9);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+    sign = (int) EEPROM.read(12);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
     if (sign == 1){
         *minVolt = -1;
     }
     else{
-    whole = (int) EEPROM.read(14);
-    whole2 = (int) EEPROM.read(15);
-    frac = (int) EEPROM.read(16);
+    whole = (int) EEPROM.read(13);
+    whole2 = (int) EEPROM.read(14);
+    frac = (int) EEPROM.read(15);
     *minVolt = (((whole+whole2)*100 + frac)/100.0);
     }
     /*Voltage*/
-    sign = (int) EEPROM.read(13);             // Max voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+    sign = (int) EEPROM.read(16);             // Max voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
     if (sign == 1){
         *maxVolt = -1;
     }
     else{
-    whole = (int) EEPROM.read(14);
-    whole2 = (int) EEPROM.read(15);
-    frac = (int) EEPROM.read(16);
+    whole = (int) EEPROM.read(17);
+    whole2 = (int) EEPROM.read(18);
+    frac = (int) EEPROM.read(19);
     *maxVolt = (((whole+whole2)*100 + frac)/100.0);
     }
 }
