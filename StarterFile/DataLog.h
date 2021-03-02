@@ -26,6 +26,7 @@ typedef struct dataTaskData {      // Contains Terminal Data
     bool* tempChangemax;        // Flag to check if the max temperature has changed
     bool* voltChangemax;        // Flag to check if the max voltage has changed
     bool* currChangemax;        // Flag to check if the max current has changed
+    bool* recover;              // Recover values after shutdown
 } logData;
 
 

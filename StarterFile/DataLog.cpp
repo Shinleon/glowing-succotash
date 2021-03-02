@@ -193,6 +193,80 @@ void eepromTempResetMax ( float* maxTemp) {
    // EEPROM.write(4, whole);
    // EEPROM.write(5, frac);
 }
+/********************************************************************
+  * Function name: recoverMinMax
+  * Function inputs: 
+  * Function outputs:void
+  * Function description: Set max EEPROM temperature value. 
+  * Author(s): Leonard Shin; Leika Yamada
+  *******************************************************************/
+void  recoverMinMax(float* maxTemp, float* minTemp, float* minCurrent, float* maxCurrent, float* minVolt, float* maxVolt) {
+    int sign = 0;
+    int whole = 0;
+    int whole2 = 0;
+    int frac = 0;
+    /*Temperature*/
+    sign = (int) EEPROM.read(0);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    whole = (int) EEPROM.read(1);
+    frac = (int) EEPROM.read(2);
+    if (sign == 1){
+    *minTemp = sign*(-1)*((whole*100 + frac)/100.0);
+    } else{
+    *minTemp = ((whole*100 + frac)/100.0);
+    }
+   /*Temperature*/
+    sign = (int) EEPROM.read(3);             // MaxTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    whole = (int) EEPROM.read(4);
+    frac = (int) EEPROM.read(5);
+
+    if (sign == 1){
+    *maxTemp = sign*(-1)*((whole*100 + frac)/100.0);
+    } else{
+    *maxTemp = ((whole*100 + frac)/100.0);
+    }
+    /*Current*/
+    sign = (int) EEPROM.read(6);             // MinCurr = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    whole = (int) EEPROM.read(7);
+    frac = (int) EEPROM.read(8);
+
+    if (sign == 1){
+    *minCurrent = sign*(-1)*((whole*100 + frac)/100.0);
+    } else{
+    *minCurrent = ((whole*100 + frac)/100.0);
+    }
+   /*Current*/
+    sign = (int) EEPROM.read(6);             // MinCurr = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    whole = (int) EEPROM.read(7);
+    frac = (int) EEPROM.read(8);
+
+    if (sign == 1){
+    *maxCurrent = sign*(-1)*((whole*100 + frac)/100.0);
+    } else{
+    *maxCurrent = ((whole*100 + frac)/100.0);
+    }
+    /*Voltage*/
+    sign = (int) EEPROM.read(9);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+    if (sign == 1){
+        *minVolt = -1;
+    }
+    else{
+    whole = (int) EEPROM.read(14);
+    whole2 = (int) EEPROM.read(15);
+    frac = (int) EEPROM.read(16);
+    *minVolt = (((whole+whole2)*100 + frac)/100.0);
+    }
+    /*Voltage*/
+    sign = (int) EEPROM.read(13);             // Max voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+    if (sign == 1){
+        *maxVolt = -1;
+    }
+    else{
+    whole = (int) EEPROM.read(14);
+    whole2 = (int) EEPROM.read(15);
+    frac = (int) EEPROM.read(16);
+    *maxVolt = (((whole+whole2)*100 + frac)/100.0);
+    }
+}
 /**********************************************************************
   *  Function name: terminalTask
   *  Function inputs: void* tData
@@ -207,7 +281,11 @@ void eepromTempResetMax ( float* maxTemp) {
   *********************************************************************/
 void dataLogTask ( void* dData ) {
      logData* data = ( logData* ) dData;
-     if(*(data->EEPROMReset) == true){
+      if(*(data->recover) == true){                      
+          *(data->recover) = false;
+          recoverMinMax(data->maxTemp, data->minTemp, data->minCurrent, data->maxCurrent, data->minVolt, data->maxVolt);
+      }
+     if(*(data->EEPROMReset) == true){                      
           *(data->EEPROMReset) = false;
           eepromReset();
       }else{
