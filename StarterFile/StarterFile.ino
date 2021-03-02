@@ -126,7 +126,7 @@ char alarmButtonLabels[1][12] = {"Ack. All"};
 /*Timer Initialization*/
 volatile bool timeBaseFlag = 0;                              // Global time base flag
 volatile bool myHvilStat = 0;                                // Hvil status
-TCB* head = null;
+TCB* head = NULL;
 byte tenths = 0;
 /************************************************************************************
   * Function name: loop
@@ -161,14 +161,14 @@ void loop() {
   ******************************************************************************/
 void scheduler() {
     //TCB* curr = &measurementTCB;   // &measurementTCB is the start point
-    // {&measurementTCB, &stateOfChargeTCB, &alarmTCB, &contactorTCB, &EEPROM_shit, &terminalTCB, &displayTCB}
+    // {&measurementTCB, &stateOfChargeTCB, &alarmTCB, &contactorTCB, &datalogTCB, &terminalTCB, &displayTCB}
     TCB* curr = head;
 
     while(curr != NULL)
     {
-        temp = curr->next;         // make temp variable for next
-        temp->prev = null;         // delete back arrow from next
-        curr->next = null;         // delete forard connection on current
+        TCB* temp = curr->next;         // make temp variable for next
+        temp->prev = NULL;         // delete back arrow from next
+        curr->next = NULL;         // delete forard connection on current
         curr->task(curr->taskDataPtr);
         curr = temp;               // step forward
     }
@@ -176,7 +176,7 @@ void scheduler() {
     head = &measurementTCB;   //always start with measurement task
     curr = head;
     
-    curr->next = &stateofChargeTCB;
+    curr->next = &stateOfChargeTCB;
     curr->next->prev = curr;
     curr = curr->next;
     
@@ -188,19 +188,20 @@ void scheduler() {
     curr->next->prev = curr;
     curr = curr->next;
 
-    if(tenths % 50 == 0 )
-    {
-       // Do the EEPROM read/write given that the EEPROM needs to be chaged
-       //   aka. there is a new min or max for any of the measures
-    }
 
     if(tenths % 10 == 0 )
     {
-       // Do the EEPROM read/write given that the EEPROM needs to be chaged
-       //   aka. there is a new min or max for any of the measures
+        curr->next = &terminalTCB;
+        curr->next->prev = curr;
+        curr = curr->next;
     }
 
-    
+    if(tenths % 50 == 0 )
+    {
+        curr->next = &datalogTCB;
+        curr->next->prev = curr;
+        curr = curr->next;
+    }
     return;
 }
 
