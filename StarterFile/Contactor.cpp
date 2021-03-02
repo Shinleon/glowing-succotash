@@ -15,7 +15,7 @@
   *                       open the contactor does not turn on. 
   * Author(s): Leonard Shin, Leika Yamada
   *****************************************************************/
-void updateContactor ( bool* contactorStatus, bool* local, bool* ack, int* contactorLED, volatile byte* hvilAlarm) {
+void updateContactor ( bool* contactorStatus, bool* local, bool* ack, int* contactorLED, volatile byte* hvilAlarm, byte* voltAlarm, byte* currentAlarm) {
     // Need to acknowledge change if it was changed
     noInterrupts();                                                                                                     // Disable interrupts
     if(*ack == 1 && *hvilAlarm == NOT_ACTIVE){                                                                          // If the alarm has if off, set contactor to 1
@@ -25,7 +25,7 @@ void updateContactor ( bool* contactorStatus, bool* local, bool* ack, int* conta
         *local = *contactorStatus;
         //*ack = true; 
     }
-    if( *contactorStatus == 1 && *hvilAlarm == NOT_ACTIVE ){                                                            // turn on the contactor if the hvil is not active
+    if( *contactorStatus == 1 && *hvilAlarm == NOT_ACTIVE && *voltAlarm == NOT_ACTIVE && *currentAlarm == NOT_ACTIVE ){                                                            // turn on the contactor if the hvil is not active
         
         digitalWrite(*contactorLED, HIGH);
     }
@@ -47,7 +47,7 @@ void contactorTask ( void* contactData ) {
   
     contactorData* data = (contactorData*) contactData;
     
-    updateContactor(data->contactorStatus, data->localContactor, data->acknowledge, data->contactorLED, data->hvilAlarm);   // Update all sensors
+    updateContactor(data->contactorStatus, data->localContactor, data->acknowledge, data->contactorLED, data->hvilAlarm, data->hVoltOutofRange, data->overCurrent);   // Update all sensors
     
     return;
 }

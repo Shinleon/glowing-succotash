@@ -161,8 +161,6 @@ void loop() {
   * Function inputs:  void
   * Function outputs: void
   * Function description: This runs all the tasks calling the doubly linked list.
-  *                       It utilizes the delete and insert tcb functions to 
-  *                       determine what the next run needs scheduled
   * Author(s): Leonard Shin, Leika Yamada
   ******************************************************************************/
 void scheduler() {
@@ -193,16 +191,13 @@ void scheduler() {
     curr = insert_tcb(curr, &displayTCB);    
     return;
 }
-
-/********************************************************************
-  * Function name: delete_tcb
-  * Function inputs: TCB pointer
-  * Function outputs: TCB pointer to the next tcb
-  * Function description: deletes the tcb provided as a parameter
-  *                       while returning a pointer to the deleted
-  *                       tcb's next tcb
+/******************************************************************************
+  * Function name:    delete_tcb
+  * Function inputs:  TCB* curr
+  * Function outputs: void
+  * Function description: This deletes a node from the doubly linked list.
   * Author(s): Leonard Shin, Leika Yamada
-  *******************************************************************/
+  ******************************************************************************/
 TCB* delete_tcb(TCB* curr)
 {
     TCB* temp = curr->next;
@@ -216,16 +211,13 @@ TCB* delete_tcb(TCB* curr)
     curr->prev = NULL;
     return temp;
 }
-/********************************************************************
-  * Function name: insert_tcb
-  * Function inputs: TCB pointer to insert after, TCB pointer to insert
-  * Function outputs: TCB pointer to the next tcb
-  * Function description: inserts the tcb provided as a second parameter
-  *                       after the first parameter
-  *                       returns a pointer to the second TCB
-  *                       (aka. the one that was inserted)
+/******************************************************************************
+  * Function name:    insert_tcb
+  * Function inputs:  TCB* curr, TCB* insert
+  * Function outputs: void
+  * Function description: This inserts a node from the doubly linked list.
   * Author(s): Leonard Shin, Leika Yamada
-  *******************************************************************/
+  ******************************************************************************/
 TCB* insert_tcb(TCB* curr, TCB* insert)
 {
     if(curr->next != NULL)
@@ -348,7 +340,7 @@ void setup() {
     
     /*Initialize Contactor*/
     contactState = {&contactorState, &contactorLocal,                   // Initialize contactor data struct with contactor data
-                    &contactorAck, &contactorLED, &hVoltInterlock};                    
+                    &contactorAck, &hVoltOutofRange, &overCurrent, &contactorLED, &hVoltInterlock};                    
     contactorTCB.task = &contactorTask;                                 // Store a pointer to the contactor task update function in the TCB                             
     contactorTCB.taskDataPtr = &contactState;
 
