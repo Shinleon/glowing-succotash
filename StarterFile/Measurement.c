@@ -34,19 +34,19 @@ void updateHVIL ( bool* hvilReading, const int* pin ) {
   *                       or max is acheived.
   * Author(s):  Leonard Shin; Leika Yamada
   **************************************************************************/
-void updateTemperature ( float* temperatureReading, const byte* pin, float* minTemp, float* maxTemp, bool* tempChange ) {
+void updateTemperature ( float* temperatureReading, const byte* pin, float* minTemp, float* maxTemp, bool* tempChangemin, bool* tempChangemax) {
     float lowest_temp = -10;
     float highest_temp = 45;
     //float slope = (highest_temp-lowest_temp)/read_range;
     //float scaling = slope*analogRead(*pin)+lowest_temp; 
     *temperatureReading = (((analogRead(*pin) - read_range_low)*(highest_temp-lowest_temp))/(read_range_high - read_range_low))+lowest_temp;
-
+    
     if(*minTemp > *temperatureReading){
         *minTemp = *temperatureReading;
-        *tempChange = true;
+        *tempChangemin = true;
     }else if(*maxTemp < *temperatureReading){
         *maxTemp = *temperatureReading;
-        *tempChange = true;  
+        *tempChangemax = true;  
     }
     return;
 }
@@ -62,7 +62,7 @@ void updateTemperature ( float* temperatureReading, const byte* pin, float* minT
   *                       or max is acheived.
   *  Author(s):  Leonard Shin; Leika Yamada
   ******************************************************************/
-void updateHvCurrent ( float* currentReading, const byte* pin, float* minCurrent, float* maxCurrent, bool* currChange  ) {
+void updateHvCurrent ( float* currentReading, const byte* pin, float* minCurrent, float* maxCurrent, bool* currChangemin, bool* currChangemax  ) {
     float lowest_curr = -25;
     float highest_curr = 25;
     //float slope = (highest_curr-lowest_curr)/read_range;
@@ -71,10 +71,10 @@ void updateHvCurrent ( float* currentReading, const byte* pin, float* minCurrent
 
     if(*minCurrent > *currentReading){
         *minCurrent = *currentReading;
-        *currChange = true;
+        *currChangemin = true;
     }else if(*maxCurrent < *currentReading){
         *maxCurrent = *currentReading;
-        *currChange = true;  
+        *currChangemax = true;  
     }
     
     return;
@@ -90,7 +90,7 @@ void updateHvCurrent ( float* currentReading, const byte* pin, float* minCurrent
   *                       or max is acheived.
   * Author(s): Leonard Shin; Leika Yamada
   *******************************************************************/
-void updateHvVoltage ( float* voltageReading, const byte* pin, float* minVolt, float* maxVolt, bool* voltChange  ) {
+void updateHvVoltage ( float* voltageReading, const byte* pin, float* minVolt, float* maxVolt, bool* voltChangemin, bool* voltChangemax  ) {
     //float lowest_volt = 0;
     float highest_volt = 450;
     //float slope = (highest_volt-lowest_volt)/read_range;
@@ -101,10 +101,10 @@ void updateHvVoltage ( float* voltageReading, const byte* pin, float* minVolt, f
 
     if(*minVolt > *voltageReading || -1 == *minVolt){
         *minVolt = *voltageReading;
-        *voltChange = true;
+        *voltChangemin = true;
     }else if(*maxVolt < *voltageReading || -1 == *maxVolt){
         *maxVolt = *voltageReading;
-        *voltChange = true;  
+        *voltChangemax = true;  
     }
     
     return;
@@ -147,9 +147,9 @@ void measurementTask ( void* mData ) {
 
     // Update all sensors
     updateHVIL(data->hvilStatus, data->hvilPin);
-    updateTemperature(data->temperature, data->tempPin, data->minTemp, data->maxTemp, data->tempChange);
-    updateHvCurrent(data->hvCurrent, data->currPin, data->minCurrent, data->maxCurrent, data->currChange);
-    updateHvVoltage(data->hvVoltage, data->voltPin, data->minVolt, data->maxVolt, data->voltChange);
+    updateTemperature(data->temperature, data->tempPin, data->minTemp, data->maxTemp, data->tempChangemin, data->tempChangemax);
+    updateHvCurrent(data->hvCurrent, data->currPin, data->minCurrent, data->maxCurrent, data->currChangemin, data->currChangemax);
+    updateHvVoltage(data->hvVoltage, data->voltPin, data->minVolt, data->maxVolt, data->voltChangemin, data->voltChangemax);
     
     return;
 }

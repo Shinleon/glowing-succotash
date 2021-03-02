@@ -82,9 +82,12 @@ float minCurrent;               // Stores the minimum HV current
 float maxCurrent;               // Stores the maximum HV current
 float minVolt;                  // Stores the minimum HV voltage
 float maxVolt;                  // Stores the maximum HV voltage
-bool tempChange = false;        // Flag to check if the min or max temperature has changed
-bool voltChange = false;        // Flag to check if the min or max voltage has changed
-bool currChange = false;        // Flag to check if the min or max current has changed
+bool tempChangemin = false;        // Flag to check if the min temperature has changed
+bool voltChangemin = false;        // Flag to check if the min voltage has changed
+bool currChangemin = false;        // Flag to check if the min current has changed
+bool tempChangemax = false;        // Flag to check if the max temperature has changed
+bool voltChangemax = false;        // Flag to check if the max voltage has changed
+bool currChangemax = false;        // Flag to check if the max current has changed
                                
 alarmData alarmStatus;                // Declare an Alarm data structure - defined in Alarm.h
 volatile byte hVoltInterlock = 0;     // Store the alarm status for the HVIL alarm
@@ -300,7 +303,7 @@ void setup() {
 
        
     /* Initialize Measurement & Sensors*/
-    measure = {&hVIL, &hvilPin, &temperature, &tempPin, &hvCurrent, &currPin, &hvVoltage, &voltPin, &EEPROMReset, &minTemp, &maxTemp, &minCurrent, &maxCurrent, &minVolt, &maxVolt, &tempChange, &voltChange, &currChange};  // Initailize measure data struct with data
+    measure = {&hVIL, &hvilPin, &temperature, &tempPin, &hvCurrent, &currPin, &hvVoltage, &voltPin, &EEPROMReset, &minTemp, &maxTemp, &minCurrent, &maxCurrent, &minVolt, &maxVolt, &tempChangemin, &voltChangemin, &currChangemin, &tempChangemax, &voltChangemax, &currChangemax};  // Initailize measure data struct with data
     measurementTCB.task = &measurementTask;                             // Store a pointer to the measurementTask update function in the TCB
     measurementTCB.taskDataPtr = &measure;                                            
 
@@ -341,7 +344,7 @@ void setup() {
     terminalTCB.taskDataPtr = &terminal;
 
      /*Initialize DataLog Task*/
-    dataLog = {&minTemp, &maxTemp, &minCurrent, &maxCurrent, &minVolt, &maxVolt, &EEPROMReset};  // Initailize terminal data struct with data
+    dataLog = {&minTemp, &maxTemp, &minCurrent, &maxCurrent, &minVolt, &maxVolt, &EEPROMReset, &tempChangemin, &voltChangemin, &currChangemin, &tempChangemax, &voltChangemax, &currChangemax};  // Initailize terminal data struct with data
     datalogTCB.task = &dataLogTask;                                                             // Store a pointer to the measurementTask update function in the TCB
     datalogTCB.taskDataPtr = &dataLog;
 

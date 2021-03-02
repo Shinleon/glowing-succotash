@@ -20,9 +20,12 @@ typedef struct dataTaskData {      // Contains Terminal Data
     float* minVolt;
     float* maxVolt;
     bool* EEPROMReset;
-    bool* tempChange;        // Flag to check if the min or max temperature has changed
-    bool* voltChange;        // Flag to check if the min or max voltage has changed
-    bool* currChange;        // Flag to check if the min or max current has changed
+    bool* tempChangemin;        // Flag to check if the min or max temperature has changed
+    bool* voltChangemin;        // Flag to check if the min or max voltage has changed
+    bool* currChangemin;        // Flag to check if the min or max current has changed
+    bool* tempChangemax;        // Flag to check if the max temperature has changed
+    bool* voltChangemax;        // Flag to check if the max voltage has changed
+    bool* currChangemax;        // Flag to check if the max current has changed
 } logData;
 
 

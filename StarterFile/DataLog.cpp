@@ -18,42 +18,180 @@
   *******************************************************************/
 void eepromReset () {
     //EEPROM.write(0, i);           // EEPROM write, address, int(0-255)
+                                    // Sign: 0 is positive 1 is negative
+    /*Temperature*/
+   // EEPROM.write(0, 0);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+   // EEPROM.write(1, 0);
+   // EEPROM.write(2, 0);
+   /*Temperature*/
+   // EEPROM.write(3, 0);             // MaxTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+   // EEPROM.write(4, 0);
+   // EEPROM.write(5, 0);
+    /*Current*/
+   // EEPROM.write(6, 0);             // Min Current = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+   // EEPROM.write(7, 0);
+   // EEPROM.write(8, 0);
+   /*Current*/
+   // EEPROM.write(9, 0);             // Max Current = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+   // EEPROM.write(10, 0);
+   // EEPROM.write(11, 0);
+    /*Voltage*/
+   // EEPROM.write(12, 1);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+   // EEPROM.write(13, 1);
+   // EEPROM.write(14, 0);
+   // EEPROM.write(15, 0);
+    /*Voltage*/
+   // EEPROM.write(16, 1);             // Max voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+   // EEPROM.write(17, 1);
+   // EEPROM.write(18, 0);
+   // EEPROM.write(19, 0);
+    
 }
 /********************************************************************
-  * Function name: eepromCurrReset
-  * Function inputs: void
+  * Function name: eepromCurrResetMin
+  * Function inputs: minCurr
   * Function outputs:void
-  * Function description: Set EEPROM values to default. Voltage to -1,
-  *                       current to 0, and temperature to 0.
-  *                       voltage from location 
+  * Function description: Set minimum current EEPROM values.
   * Author(s): Leonard Shin; Leika Yamada
   *******************************************************************/
-void eepromCurrReset (float* minCurr, float* maxCurr) {
+void eepromCurrResetMin ( float* minCurr ) {
     //EEPROM.write(0, i);           // EEPROM write, address, int(0-255)
+    int myCurr = (int) *minCurr * 100;
+    int sign = 0;
+    if(*minCurr < 0){
+        sign = 1;
+    }
+    myCurr = abs(myCurr);
+    int whole = myCurr / 100;
+    int frac = myCurr % 100;
+    
+    /*Temperature*/
+   // EEPROM.write(6, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+   // EEPROM.write(7, whole);
+   // EEPROM.write(8, frac);
 }
 /********************************************************************
-  * Function name: eepromVoltReset
-  * Function inputs: void
+  * Function name: eepromCurrResetMax
+  * Function inputs: minCurr
   * Function outputs:void
-  * Function description: Set EEPROM values to default. Voltage to -1,
-  *                       current to 0, and temperature to 0.
-  *                       voltage from location 
+  * Function description: Set maximum current EEPROM values.
   * Author(s): Leonard Shin; Leika Yamada
   *******************************************************************/
-void eepromVoltReset (float* minVolt, float* maxVolt) {
+void eepromCurrResetMax ( float* maxCurr ) {
     //EEPROM.write(0, i);           // EEPROM write, address, int(0-255)
+    int myCurr = (int) *maxCurr * 100;
+    int sign = 0;
+    if(*maxCurr < 0){
+        sign = 1;
+    }
+    myCurr = abs(myCurr);
+    int whole = myCurr / 100;
+    int frac = myCurr % 100;
+    
+    /*Temperature*/
+   // EEPROM.write(9, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+   // EEPROM.write(10, whole);
+   // EEPROM.write(11, frac);
 }
 /********************************************************************
-  * Function name: eepromTempReset
-  * Function inputs: void
+  * Function name: eepromVoltResetMin
+  * Function inputs: minVolt
   * Function outputs:void
-  * Function description: Set EEPROM values to default. Voltage to -1,
-  *                       current to 0, and temperature to 0.
-  *                       voltage from location 
+  * Function description: Set minimum voltage EEPROM value. Using 4
+  *                       bytes.
   * Author(s): Leonard Shin; Leika Yamada
   *******************************************************************/
-void eepromTempReset (float* minTemp, float* maxTemp) {
+void eepromVoltResetMin (float* minVolt) {
     //EEPROM.write(0, i);           // EEPROM write, address, int(0-255)
+    int myVolt = (int) *minVolt * 100;
+    int sign = 0;
+    int whole = myVolt / 100;
+    int whole2 = 0;
+    if ( whole > 250 ){
+        whole2 = whole - 250;
+        whole = 250;
+    }
+    int frac = myVolt % 100;
+
+    /*Voltage*/
+   // EEPROM.write(12, sign);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+   // EEPROM.write(13, whole);
+   // EEPROM.write(14, whole2);
+   // EEPROM.write(15, frac);
+    
+}
+/********************************************************************
+  * Function name: eepromVoltResetMax
+  * Function inputs: maxVolt
+  * Function outputs:void
+  * Function description: Set maximum voltage EEPROM value. Using 4
+  *                       bytes.
+  * Author(s): Leonard Shin; Leika Yamada
+  *******************************************************************/
+void eepromVoltResetMax (float* maxVolt) {
+    //EEPROM.write(0, i);           // EEPROM write, address, int(0-255)
+    int myVolt = (int) *maxVolt * 100;
+    int sign = 0;
+    int whole = myVolt / 100;
+    int whole2 = 0;
+    if ( whole > 250 ){
+        whole2 = whole - 250;
+        whole = 250;
+    }
+    int frac = myVolt % 100;
+
+    /*Voltage*/
+   // EEPROM.write(16, sign);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+   // EEPROM.write(17, whole);
+   // EEPROM.write(18, whole2);
+   // EEPROM.write(19, frac);
+    
+}
+/********************************************************************
+  * Function name: eepromTempResetMin
+  * Function inputs: minTemp
+  * Function outputs:void
+  * Function description: Set minimum EEPROM temperature value. 
+  * Author(s): Leonard Shin; Leika Yamada
+  *******************************************************************/
+void eepromTempResetMin ( float* minTemp) {
+  
+    int myTemp = (int) *minTemp * 100;
+    int sign = 0;
+    if(*minTemp < 0){
+        sign = 1;
+    }
+    myTemp = abs(myTemp);
+    int whole = myTemp / 100;
+    int frac = myTemp % 100;
+    
+    /*Temperature*/
+   // EEPROM.write(0, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+   // EEPROM.write(1, whole);
+   // EEPROM.write(2, frac);
+}
+/********************************************************************
+  * Function name: eepromTempResetMax
+  * Function inputs: void
+  * Function outputs:void
+  * Function description: Set max EEPROM temperature value. 
+  * Author(s): Leonard Shin; Leika Yamada
+  *******************************************************************/
+void eepromTempResetMax ( float* maxTemp) {
+  
+    int myTemp = (int) *maxTemp * 100;
+    int sign = 0;
+    if(*maxTemp < 0){
+        sign = 1;
+    }
+    myTemp = abs(myTemp);
+    int whole = myTemp / 100;
+    int frac = myTemp % 100;
+    
+    /*Temperature*/
+   // EEPROM.write(3, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+   // EEPROM.write(4, whole);
+   // EEPROM.write(5, frac);
 }
 /**********************************************************************
   *  Function name: terminalTask
@@ -73,17 +211,29 @@ void dataLogTask ( void* dData ) {
           *(data->EEPROMReset) = false;
           eepromReset();
       }else{
-          if (*(data->tempChange) == true){
-              *(data->tempChange) = false;
-                eepromTempReset(data->minTemp, data->maxTemp);
+          if (*(data->tempChangemin) == true){
+              *(data->tempChangemin) = false;
+                eepromTempResetMin(data->minTemp);
             }
-          if (*(data->voltChange) == true){
-              *(data->voltChange) = false;
-                eepromVoltReset(data->minVolt, data->maxVolt);
+          if (*(data->tempChangemax) == true){
+              *(data->tempChangemax) = false;
+                eepromTempResetMax(data->maxTemp);
             }
-          if (*(data->currChange) == true){
-              *(data->currChange) = false;
-                eepromCurrReset(data->minCurrent, data->maxCurrent);
+          if (*(data->voltChangemin) == true){
+              *(data->voltChangemin) = false;
+                eepromVoltResetMin(data->minVolt);
+            }
+          if (*(data->voltChangemax) == true){
+              *(data->voltChangemax) = false;
+                eepromVoltResetMax(data->maxVolt);
+            }
+          if (*(data->currChangemin) == true){
+              *(data->currChangemin) = false;
+                eepromCurrResetMin(data->minCurrent);
+            }
+          if (*(data->currChangemax) == true){
+              *(data->currChangemax) = false;
+                eepromCurrResetMax(data->maxCurrent);
             }   
       }
     return;
