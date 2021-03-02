@@ -20,31 +20,31 @@ void eepromReset () {
     //EEPROM.write(0, i);           // EEPROM write, address, int(0-255)
                                     // Sign: 0 is positive 1 is negative
     /*Temperature*/
-   // EEPROM.write(0, 0);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
-   // EEPROM.write(1, 0);
-   // EEPROM.write(2, 0);
+    EEPROM.write(0, 0);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    EEPROM.write(1, 0);
+    EEPROM.write(2, 0);
    /*Temperature*/
-   // EEPROM.write(3, 0);             // MaxTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
-   // EEPROM.write(4, 0);
-   // EEPROM.write(5, 0);
+    EEPROM.write(3, 0);             // MaxTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    EEPROM.write(4, 0);
+    EEPROM.write(5, 0);
     /*Current*/
-   // EEPROM.write(6, 0);             // Min Current = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
-   // EEPROM.write(7, 0);
-   // EEPROM.write(8, 0);
+    EEPROM.write(6, 0);             // Min Current = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    EEPROM.write(7, 0);
+    EEPROM.write(8, 0);
    /*Current*/
-   // EEPROM.write(9, 0);             // Max Current = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
-   // EEPROM.write(10, 0);
-   // EEPROM.write(11, 0);
+    EEPROM.write(9, 0);             // Max Current = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    EEPROM.write(10, 0);
+    EEPROM.write(11, 0);
     /*Voltage*/
-   // EEPROM.write(12, 1);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
-   // EEPROM.write(13, 1);
-   // EEPROM.write(14, 0);
-   // EEPROM.write(15, 0);
+    EEPROM.write(12, 1);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+    EEPROM.write(13, 1);
+    EEPROM.write(14, 0);
+    EEPROM.write(15, 0);
     /*Voltage*/
-   // EEPROM.write(16, 1);             // Max voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
-   // EEPROM.write(17, 1);
-   // EEPROM.write(18, 0);
-   // EEPROM.write(19, 0);
+    EEPROM.write(16, 1);             // Max voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+    EEPROM.write(17, 1);
+    EEPROM.write(18, 0);
+    EEPROM.write(19, 0);
     
 }
 /********************************************************************
@@ -66,9 +66,9 @@ void eepromCurrResetMin ( float* minCurr ) {
     int frac = myCurr % 100;
     
     /*Temperature*/
-   // EEPROM.write(6, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
-   // EEPROM.write(7, whole);
-   // EEPROM.write(8, frac);
+    EEPROM.write(6, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    EEPROM.write(7, whole);
+    EEPROM.write(8, frac);
 }
 /********************************************************************
   * Function name: eepromCurrResetMax
@@ -89,9 +89,9 @@ void eepromCurrResetMax ( float* maxCurr ) {
     int frac = myCurr % 100;
     
     /*Temperature*/
-   // EEPROM.write(9, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
-   // EEPROM.write(10, whole);
-   // EEPROM.write(11, frac);
+    EEPROM.write(9, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    EEPROM.write(10, whole);
+    EEPROM.write(11, frac);
 }
 /********************************************************************
   * Function name: eepromVoltResetMin
@@ -114,10 +114,10 @@ void eepromVoltResetMin (float* minVolt) {
     int frac = myVolt % 100;
 
     /*Voltage*/
-   // EEPROM.write(12, sign);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
-   // EEPROM.write(13, whole);
-   // EEPROM.write(14, whole2);
-   // EEPROM.write(15, frac);
+    EEPROM.write(12, sign);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+    EEPROM.write(13, whole);
+    EEPROM.write(14, whole2);
+    EEPROM.write(15, frac);
     
 }
 /********************************************************************
@@ -141,10 +141,10 @@ void eepromVoltResetMax (float* maxVolt) {
     int frac = myVolt % 100;
 
     /*Voltage*/
-   // EEPROM.write(16, sign);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
-   // EEPROM.write(17, whole);
-   // EEPROM.write(18, whole2);
-   // EEPROM.write(19, frac);
+    EEPROM.write(16, sign);             // Min voltage = 0: byte1 : sign, byte2: Whole part(0 - 250), byte3:  Whole part(0 - 250), byte 4: fractional part (2 digits)
+    EEPROM.write(17, whole);
+    EEPROM.write(18, whole2);
+    EEPROM.write(19, frac);
     
 }
 /********************************************************************
@@ -166,9 +166,9 @@ void eepromTempResetMin ( float* minTemp) {
     int frac = myTemp % 100;
     
     /*Temperature*/
-   // EEPROM.write(0, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
-   // EEPROM.write(1, whole);
-   // EEPROM.write(2, frac);
+    EEPROM.write(0, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    EEPROM.write(1, whole);
+    EEPROM.write(2, frac);
 }
 /********************************************************************
   * Function name: eepromTempResetMax
@@ -189,9 +189,9 @@ void eepromTempResetMax ( float* maxTemp) {
     int frac = myTemp % 100;
     
     /*Temperature*/
-   // EEPROM.write(3, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
-   // EEPROM.write(4, whole);
-   // EEPROM.write(5, frac);
+    EEPROM.write(3, sign);             // MinTemp = 0: byte1 : sign, byte2: Whole part, byte3: fractional part (2 digits)
+    EEPROM.write(4, whole);
+    EEPROM.write(5, frac);
 }
 /********************************************************************
   * Function name: recoverMinMax
