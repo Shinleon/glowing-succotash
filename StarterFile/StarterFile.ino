@@ -10,6 +10,8 @@
 #include "Contactor.h"
 #include "Display.h"
 #include "Alarm.h"
+#include "RemoteTerminal.h"
+#include "DataLog.h"
 
 
 #include <pin_magic.h>
@@ -44,12 +46,22 @@
 #define BATTERY 0x02  // Used to keep track of which screen is displayed: Battery screen
 
 #define SOC 0                   // Constant SOC value
+
+                                // EEPROM Reset values
+#define CURR_RESET 0            // HV current reset value
+#define VOLT_RESET -1           // HV Voltage reset value
+#define TEMP_RESET 0            // Temperature reset value
+
                                 // Task Control Blocks
 TCB measurementTCB;             // Declare measurement TCB
 TCB stateOfChargeTCB;           // Declare state of charge TCB
 TCB contactorTCB;               // Declare contactor TCB
 TCB alarmTCB;                   // Declare alarm TCB
 TCB displayTCB;                 // Declare display TCB   [Display should be last task done each cycle]
+TCB terminalTCB;                // Declare remote terminal TCB
+
+bool EEPROMReset = true;        // Flag to check if the user wants to reset EEPROM
+terminalData terminal;          // Remote terminal data struct
 
                                 // Measurement Data
 measurementData measure;        // Declare measurement data structure - defined in Measurement.h
@@ -61,6 +73,15 @@ float hvVoltage     = 0;        // Stores the measured voltage in the HVIL
 byte voltPin = A13;
 bool hVIL           = 0;        // Stores whether or not the HVIL is closed(0) or open(1) *Switched due to pullup
 const int hvilPin   = 21;       // Stores the input pin number for HVIL
+float minTemp;                  // Stores the minimum temperature
+float maxTemp;                  // Stores the maximum temperature
+float minCurrent;               // Stores the minimum HV current
+float maxCurrent;               // Stores the maximum HV current
+float minVolt;                  // Stores the minimum HV voltage
+float maxVolt;                  // Stores the maximum HV voltage
+bool tempChange = false;        // Flag to check if the min or max temperature has changed
+bool voltChange = false;        // Flag to check if the min or max voltage has changed
+bool currChange = false;        // Flag to check if the min or max current has changed
                                
 alarmData alarmStatus;                // Declare an Alarm data structure - defined in Alarm.h
 volatile byte hVoltInterlock = 0;     // Store the alarm status for the HVIL alarm
@@ -79,7 +100,7 @@ int contactorLED = 53;                // Store the output pin for the contactor
 bool contactorLocal = contactorState; // initialize local to be same as state
 bool contactorAck = 0;
 
-int runTask[5] = {1, 1, 1, 1, 1};     //Designate if the tasks should be run
+int runTask[6] = {1, 1, 1, 1, 1, 1};     //Designate if the tasks should be run
 
 displayData displayUpdates;                                     // Display Data structure
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);   // LCD touchscreen
@@ -238,6 +259,7 @@ void setup() {
     /*Initailize HVIL Timer*/
     attachInterrupt(digitalPinToInterrupt(hvilPin), hvilISR , RISING);
     interrupts();
+
        
     /* Initialize Measurement & Sensors*/
     measure = {&hVIL, &hvilPin, &temperature, &tempPin, &hvCurrent, &currPin, &hvVoltage, &voltPin};  // Initailize measure data struct with data
@@ -272,8 +294,13 @@ void setup() {
     
     /*Initialize SOC*/
     chargeState = {};                                                   // Initialize state of charge data struct with state of charge boolean
-    stateOfChargeTCB.task = &stateOfChargeTask;                         // Store a pointer to the soc task update function in the TCB
+    stateOfChargeTCB.task = &stateOfChargeTask;                         // Store a pointer to the soc task update function in the TCBz
     stateOfChargeTCB.taskDataPtr = &chargeState;
+
+     /*Initialize Remote Terminal Task*/
+    terminal = {&minTemp, &maxTemp, &minCurrent, &maxCurrent, &minVolt, &maxVolt, &EEPROMReset};  // Initailize terminal data struct with data
+    terminalTCB.task = &terminalTask;                                                             // Store a pointer to the measurementTask update function in the TCB
+    terminalTCB.taskDataPtr = &terminal;
 
     /*Link each task to the next to make the task queue*/
     measurementTCB.prev = NULL;
@@ -286,9 +313,14 @@ void setup() {
     alarmTCB.next = &contactorTCB;
     
     contactorTCB.prev = &alarmTCB;
-    contactorTCB.next = &displayTCB;
-    
-    displayTCB.prev = &contactorTCB;
+    //contactorTCB.next = &displayTCB;
+    contactorTCB.next = &terminalTCB;
+
+    terminalTCB.prev = &contactorTCB;
+    terminalTCB.next = &displayTCB;
+
+    displayTCB.prev = &terminalTCB;
+    //displayTCB.prev = &contactorTCB;
     displayTCB.next = NULL;
 
 
