@@ -75,6 +75,7 @@ float hvVoltage     = 0;        // Stores the measured voltage in the HVIL
 byte voltPin = A13;
 bool hVIL           = 0;        // Stores whether or not the HVIL is closed(0) or open(1) *Switched due to pullup
 int hvilPin   = 21;       // Stores the input pin number for HVIL
+
 float minTemp;                  // Stores the minimum temperature
 float maxTemp;                  // Stores the maximum temperature
 float minCurrent;               // Stores the minimum HV current
