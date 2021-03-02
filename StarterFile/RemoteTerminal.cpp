@@ -55,21 +55,25 @@ void terminalTask ( void* tData ) {
     if ( 1 == userChoice ){
         *(data->EEPROMReset) = true;
         Serial.println("EEPROM has been reset");
+        Serial.println();
     }else if ( 2 == userChoice ){
         Serial.print("Max Current is ");
         Serial.println(*(data->maxCurrent));
         Serial.print("Min Current is ");
         Serial.println(*(data->minCurrent));
+        Serial.println();
     }else if ( 3 == userChoice ){
         Serial.print("Max Voltage is ");
         Serial.println(*(data->maxVolt));
         Serial.print("Min Voltage is ");
         Serial.println(*(data->minVolt));
+        Serial.println();
     }else if( 4 == userChoice ){
         Serial.print("Max Temperature is ");
         Serial.println(*(data->maxTemp));
         Serial.print("Min Temperature is ");
         Serial.println(*(data->minTemp));
+        Serial.println();
     }
     
     return;
