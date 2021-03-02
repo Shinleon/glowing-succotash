@@ -11,14 +11,18 @@ extern "C" {
 #include <Arduino.h>
 
 
+
 typedef struct dataTaskData {      // Contains Terminal Data
-    //float* minTemp;
-    //float* maxTemp;
-    //float* minCurrent;
-    //float* maxCurrent;
-    //float* minVolt;
-    //float* maxVolt;
-    //bool* EEPROMReset;
+    float* minTemp;
+    float* maxTemp;
+    float* minCurrent;
+    float* maxCurrent;
+    float* minVolt;
+    float* maxVolt;
+    bool* EEPROMReset;
+    bool* tempChange;        // Flag to check if the min or max temperature has changed
+    bool* voltChange;        // Flag to check if the min or max voltage has changed
+    bool* currChange;        // Flag to check if the min or max current has changed
 } logData;
 
 

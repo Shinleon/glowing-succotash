@@ -341,7 +341,7 @@ void setup() {
     terminalTCB.taskDataPtr = &terminal;
 
      /*Initialize DataLog Task*/
-    dataLog = {};  // Initailize terminal data struct with data
+    dataLog = {&minTemp, &maxTemp, &minCurrent, &maxCurrent, &minVolt, &maxVolt, &EEPROMReset};  // Initailize terminal data struct with data
     datalogTCB.task = &dataLogTask;                                                             // Store a pointer to the measurementTask update function in the TCB
     datalogTCB.taskDataPtr = &dataLog;
 

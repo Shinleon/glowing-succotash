@@ -120,16 +120,13 @@ void updateHvVoltage ( float* voltageReading, const byte* pin, float* minVolt, f
   *                       default values: Zero, -1, Zero.
   * Author(s): Leonard Shin; Leika Yamada
   *******************************************************************/
-void resetHistory ( float* minTemp, float* maxTemp, float* minCurrent, float* maxCurrent, float* minVolt, float* maxVolt, bool* tempChange, bool* currChange, bool* voltChange ) {
+void resetHistory ( float* minTemp, float* maxTemp, float* minCurrent, float* maxCurrent, float* minVolt, float* maxVolt ) {
     *minTemp = 0;
     *maxTemp = 0;
     *minCurrent = 0;
     *maxCurrent = 0;
     *minVolt = -1;
     *maxVolt = -1;
-    *tempChange = true;
-    *currChange = true;
-    *voltChange = true;
     return;
 }
 
@@ -145,7 +142,7 @@ void measurementTask ( void* mData ) {
     measurementData* data = (measurementData*) mData;
 
     if(*(data->EEPROMReset) == true){
-        resetHistory(data->minTemp, data->maxTemp, data->minCurrent, data->maxCurrent, data->minVolt, data->maxVolt, data->tempChange, data->currChange, data->voltChange );
+        resetHistory(data->minTemp, data->maxTemp, data->minCurrent, data->maxCurrent, data->minVolt, data->maxVolt );
     }
 
     // Update all sensors
