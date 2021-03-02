@@ -59,9 +59,11 @@ TCB contactorTCB;               // Declare contactor TCB
 TCB alarmTCB;                   // Declare alarm TCB
 TCB displayTCB;                 // Declare display TCB   [Display should be last task done each cycle]
 TCB terminalTCB;                // Declare remote terminal TCB
+TCB datalogTCB;                 // Declare data logger TCB
 
 bool EEPROMReset = true;        // Flag to check if the user wants to reset EEPROM
 terminalData terminal;          // Remote terminal data struct
+logData dataLog;                // DataLog data struct
 
                                 // Measurement Data
 measurementData measure;        // Declare measurement data structure - defined in Measurement.h
@@ -100,7 +102,7 @@ int contactorLED = 53;                // Store the output pin for the contactor
 bool contactorLocal = contactorState; // initialize local to be same as state
 bool contactorAck = 0;
 
-int runTask[6] = {1, 1, 1, 1, 1, 1};     //Designate if the tasks should be run
+int runTask[7] = {1, 1, 1, 1, 1, 1, 1};     //Designate if the tasks should be run
 
 displayData displayUpdates;                                     // Display Data structure
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);   // LCD touchscreen
@@ -302,6 +304,11 @@ void setup() {
     terminalTCB.task = &terminalTask;                                                             // Store a pointer to the measurementTask update function in the TCB
     terminalTCB.taskDataPtr = &terminal;
 
+     /*Initialize DataLog Task*/
+    dataLog = {};  // Initailize terminal data struct with data
+    datalogTCB.task = &dataLogTask;                                                             // Store a pointer to the measurementTask update function in the TCB
+    datalogTCB.taskDataPtr = &dataLog;
+
     /*Link each task to the next to make the task queue*/
     measurementTCB.prev = NULL;
     measurementTCB.next = &stateOfChargeTCB;
@@ -317,7 +324,10 @@ void setup() {
     contactorTCB.next = &terminalTCB;
 
     terminalTCB.prev = &contactorTCB;
-    terminalTCB.next = &displayTCB;
+    terminalTCB.next = &datalogTCB;
+
+    datalogTCB.prev = &terminalTCB;
+    datalogTCB.next = &displayTCB;
 
     displayTCB.prev = &terminalTCB;
     //displayTCB.prev = &contactorTCB;
