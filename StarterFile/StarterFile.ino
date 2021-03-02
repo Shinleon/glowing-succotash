@@ -392,7 +392,9 @@ void setup() {
     displayTCB.next = NULL;
 
 
-
+    // run datalog once to grab the old values and insert
+    // them in current max and min
+    datalogTCB.task(datalogTCB.taskDataPtr);
 
     /*Initialize serial communication*/
     Serial.begin(9600);
