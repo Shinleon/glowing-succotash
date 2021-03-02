@@ -14,6 +14,15 @@ int percent_soc[4][5] = {
                    {  0,  0,   0,  50, 100}
                   };
 
+/********************************************************************
+  * Function name: computeSoc
+  * Function inputs: float pointers to the voltage, currrent, and measured temp
+  * Function outputs: the state of charge
+  * Function description: Interpolates using the percent_soc table 
+  *                       to project what the current soc is given the 
+  *                       temp, current, and voltage
+  * Author(s): Leonard Shin; Leika Yamada
+  *******************************************************************/
 float computeSoc(float* volt, float* current, float* temp)
 {
     float resistance = 0.5;
