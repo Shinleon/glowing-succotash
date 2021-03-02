@@ -225,13 +225,13 @@ void displayBatteryScreen (bool* contactorAck){
     *                       already updated.
     * Author(s): Leonard Shin, Leika Yamada
     ******************************************************************************/
-void updateMeasurementDisplay (float* stateOfCharge, float* temperature, float* hvCurrent, float*hvVoltage, bool* hVIL) {
+void updateMeasurementDisplay (float* stateOfCharge, float* temperature, float* hvCurrent, float*hvVoltage, bool* hVIL, float* soc_value) {
     
     tft.setTextSize(1.5);
 
-   // if( *stateOfCharge != localStateOfCharge ) {       // Update SOC on screen if not already updated
+   // if( *soc_value != localStateOfCharge ) {       // Update SOC on screen if not already updated
       
-        localStateOfCharge = *stateOfCharge;
+        localStateOfCharge = *soc_value;
         tft.fillRect(160, 40, 40, 20, BLACK);
         tft.setCursor(160, 40); 
         tft.print(localStateOfCharge);
@@ -587,7 +587,7 @@ void displayTask ( void* dispData ) {
                                                                                           // Check the current screen, then update the values on those screens
     if( currentScreen == MEASURE ){
       
-        updateMeasurementDisplay(data->stateOfCharge, data->temperature, data->hvCurrent, data->hvVoltage, data->hVIL);  
+        updateMeasurementDisplay(data->stateOfCharge, data->temperature, data->hvCurrent, data->hvVoltage, data->hVIL, data->soc_value);  
     }
     else if( currentScreen == ALARM ){
       

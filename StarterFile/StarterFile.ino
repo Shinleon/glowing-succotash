@@ -192,9 +192,9 @@ void scheduler() {
     curr->next->prev = curr;
     curr = curr->next;
 
-    //curr->next = &displayTCB;
-    //curr->next->prev = curr;
-    //curr = curr->next;
+    curr->next = &displayTCB;
+    curr->next->prev = curr;
+    curr = curr->next;
 
     if(tenths % 10 == 0 )
     {
@@ -309,7 +309,7 @@ void setup() {
 
    
     /*Initialize Display*/
-    displayUpdates = {&hvilPin, &contactorState, &contactorLED, &hvCurrent, &hvVoltage, &temperature, &hVIL, &hVoltInterlock, &overCurrent, &hVoltOutofRange, &stateOfCharge, &contactorAck, &acknowledgeFlag};        // Initialize display data struct with data    
+    displayUpdates = {&hvilPin, &contactorState, &contactorLED, &hvCurrent, &hvVoltage, &temperature, &hVIL, &hVoltInterlock, &overCurrent, &hVoltOutofRange, &stateOfCharge, &contactorAck, &acknowledgeFlag, &soc_value};        // Initialize display data struct with data    
     displayTCB.task = &displayTask;                                     // Store a pointer to the displayTask update function in the TCB
     displayTCB.taskDataPtr = &displayUpdates;
  
@@ -377,8 +377,8 @@ void setup() {
 
     /*Initialize serial communication*/
     Serial.begin(9600);
-    Serial1.begin(9600);
-    Serial1.setTimeout(1000);
+   // Serial1.begin(9600);
+    //Serial1.setTimeout(1000);
 
     /*Initialize the TFT LCD screen and prepare it for display*/
     /*Identifier finder from project 1d, given in class*/

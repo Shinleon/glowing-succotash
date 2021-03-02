@@ -90,6 +90,7 @@ typedef struct displayTaskData {      // Data structure for the display task,
     float* stateOfCharge;
     bool* contactorAck;
     bool* acknowledgeFlag;
+    float* soc_value;
     
 } displayData;
 
