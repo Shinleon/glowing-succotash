@@ -191,7 +191,13 @@ void scheduler() {
     curr = insert_tcb(curr, &displayTCB);    
     return;
 }
-
+/******************************************************************************
+  * Function name:    delete_tcb
+  * Function inputs:  TCB* curr
+  * Function outputs: void
+  * Function description: This deletes a node from the doubly linked list.
+  * Author(s): Leonard Shin, Leika Yamada
+  ******************************************************************************/
 TCB* delete_tcb(TCB* curr)
 {
     TCB* temp = curr->next;
@@ -205,7 +211,13 @@ TCB* delete_tcb(TCB* curr)
     curr->prev = NULL;
     return temp;
 }
-
+/******************************************************************************
+  * Function name:    insert_tcb
+  * Function inputs:  TCB* curr, TCB* insert
+  * Function outputs: void
+  * Function description: This inserts a node from the doubly linked list.
+  * Author(s): Leonard Shin, Leika Yamada
+  ******************************************************************************/
 TCB* insert_tcb(TCB* curr, TCB* insert)
 {
     if(curr->next != NULL)
