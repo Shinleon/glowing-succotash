@@ -25,7 +25,7 @@ int terminalPrompt () {
     //while (Serial.available() == 0) {                       // Wait for user input
         // Wait for User to Input Data
     //}
-    Serial.setTimeout(5000);     
+    Serial.setTimeout(20);     
     choice = Serial.parseInt();                             // Collect serial input
     if(choice > 4 || choice < 1){
         choice = 0;

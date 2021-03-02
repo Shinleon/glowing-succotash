@@ -61,7 +61,7 @@ TCB displayTCB;                 // Declare display TCB   [Display should be last
 TCB terminalTCB;                // Declare remote terminal TCB
 TCB datalogTCB;                 // Declare data logger TCB
 
-bool EEPROMReset = true;        // Flag to check if the user wants to reset EEPROM
+bool EEPROMReset = false;        // Flag to check if the user wants to reset EEPROM
 terminalData terminal;          // Remote terminal data struct
 logData dataLog;                // DataLog data struct
 
@@ -74,7 +74,7 @@ byte currPin = A12;
 float hvVoltage     = 0;        // Stores the measured voltage in the HVIL
 byte voltPin = A13;
 bool hVIL           = 0;        // Stores whether or not the HVIL is closed(0) or open(1) *Switched due to pullup
-const int hvilPin   = 21;       // Stores the input pin number for HVIL
+int hvilPin   = 21;       // Stores the input pin number for HVIL
 float minTemp;                  // Stores the minimum temperature
 float maxTemp;                  // Stores the maximum temperature
 float minCurrent;               // Stores the minimum HV current
@@ -188,6 +188,9 @@ void scheduler() {
     curr->next->prev = curr;
     curr = curr->next;
 
+    //curr->next = &displayTCB;
+    //curr->next->prev = curr;
+    //curr = curr->next;
 
     if(tenths % 10 == 0 )
     {
@@ -296,7 +299,7 @@ void setup() {
 
        
     /* Initialize Measurement & Sensors*/
-    measure = {&hVIL, &hvilPin, &temperature, &tempPin, &hvCurrent, &currPin, &hvVoltage, &voltPin};  // Initailize measure data struct with data
+    measure = {&hVIL, &hvilPin, &temperature, &tempPin, &hvCurrent, &currPin, &hvVoltage, &voltPin, &EEPROMReset, &minTemp, &maxTemp, &minCurrent, &maxCurrent, &minVolt, &maxVolt, &tempChange, &voltChange, &currChange};  // Initailize measure data struct with data
     measurementTCB.task = &measurementTask;                             // Store a pointer to the measurementTask update function in the TCB
     measurementTCB.taskDataPtr = &measure;                                            
 

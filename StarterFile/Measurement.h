@@ -23,6 +23,16 @@ typedef struct measurementTaskData {      // Contains Measurement Data
     const byte* currPin;
 	  float* hvVoltage;
     const byte* voltPin;
+    bool* EEPROMReset;
+    float* minTemp;
+    float* maxTemp;
+    float* minCurrent;
+    float* maxCurrent;
+    float* minVolt;
+    float* maxVolt;
+    bool* tempChange;        // Flag to check if the min or max temperature has changed
+    bool* voltChange;        // Flag to check if the min or max voltage has changed
+    bool* currChange;        // Flag to check if the min or max current has changed
 } measurementData;
 
 
