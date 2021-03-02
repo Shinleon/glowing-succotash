@@ -15,7 +15,7 @@
   * Author(s): Leonard Shin; Leika Yamada
   *****************************************************************/
 void updateHVoltInterlockAlarm ( volatile byte* hVoltInterlock, bool* acknowledgeFlag, bool* hVIL ) {
-    if( *hVIL == 0 ){                                                                                       // If the switch is clsoed set alarm to not active
+    if( *hVIL == 0 && *hVoltInterlock == ACTIVE_ACK ){                                                                                       // If the switch is clsoed set alarm to not active
         *hVoltInterlock = NOT_ACTIVE;
     }
     
