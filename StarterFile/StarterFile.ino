@@ -170,46 +170,52 @@ void scheduler() {
 
     while(curr != NULL)
     {
-        TCB* temp = curr->next;         // make temp variable for next
-        temp->prev = NULL;         // delete back arrow from next
-        curr->next = NULL;         // delete forard connection on current
         curr->task(curr->taskDataPtr);
-        curr = temp;               // step forward
+        curr = delete_tcb(curr);               // step forward
     }
     // reconstruct 
     head = &measurementTCB;   //always start with measurement task
     curr = head;
-    
-    curr->next = &stateOfChargeTCB;
-    curr->next->prev = curr;
-    curr = curr->next;
-    
-    curr->next = &alarmTCB;
-    curr->next->prev = curr;
-    curr = curr->next;
-    
-    curr->next = &contactorTCB;
-    curr->next->prev = curr;
-    curr = curr->next;
-
-    curr->next = &displayTCB;
-    curr->next->prev = curr;
-    curr = curr->next;
-
+    curr = insert_tcb(curr, &stateOfChargeTCB);
+    curr = insert_tcb(curr, &alarmTCB);
+    curr = insert_tcb(curr, &contactorTCB);
     if(tenths % 10 == 0 )
     {
-        curr->next = &terminalTCB;
-        curr->next->prev = curr;
-        curr = curr->next;
+        curr = insert_tcb(curr, &terminalTCB);
     }
 
     if(tenths % 50 == 0 )
     {
-        curr->next = &datalogTCB;
-        curr->next->prev = curr;
-        curr = curr->next;
+        curr = insert_tcb(curr, &datalogTCB);
     }
+    curr = insert_tcb(curr, &displayTCB);    
     return;
+}
+
+TCB* delete_tcb(TCB* curr)
+{
+    TCB* temp = curr->next;
+    if(curr->next != NULL){
+        curr->next->prev = curr->prev;
+    }
+    if(curr->prev != NULL){
+        curr->prev->next = curr->next;
+    }
+    curr->next = NULL;
+    curr->prev = NULL;
+    return temp;
+}
+
+TCB* insert_tcb(TCB* curr, TCB* insert)
+{
+    if(curr->next != NULL)
+    {
+        curr->next->prev = insert;
+    }
+    insert->next = curr->next;
+    curr->next = insert;
+    insert->prev = curr;
+    return insert;
 }
 
 /******************************************************************************

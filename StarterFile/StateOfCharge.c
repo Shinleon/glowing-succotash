@@ -42,7 +42,7 @@ float computeSoc(float* volt, float* current, float* temp)
             {
                 return 100;
             }
-            else if(left_v == -1)
+            else
             {
                 left_v = i;
             }
@@ -51,24 +51,24 @@ float computeSoc(float* volt, float* current, float* temp)
 
     for(int i = 0; i < temp_length; i++)
     {
-        if(temp < temperatures_soc[i])
+        if(*temp < temperatures_soc[i])
         {
             if (i == 0)
             {
                 return -1; //temp is below -10
             }
-            else if(right_v == -1)
+            else if(upper_temp == -1)
             {
                 upper_temp = i;
             }
         }
-        if(temp > temperatures_soc[i])
+        else if(*temp > temperatures_soc[i])
         {
-            if (i == volt_length - 1)
+            if (i == temp_length - 1)
             {
-                return -1;   //temp is above 45
+                return -2;   //temp is above 45
             }
-            else if(left_v == -1)
+            else
             {
                 lower_temp = i;
             }
