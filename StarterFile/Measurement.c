@@ -69,7 +69,7 @@ void updateHvCurrent ( float* currentReading, const byte* pin, float* minCurrent
     //float scaling = slope*analogRead(*pin)+lowest_curr; 
     *currentReading =(((analogRead(*pin) - read_range_low)*(highest_curr-lowest_curr))/(read_range_high - read_range_low))+lowest_curr;
 
-    if(*minCurrent > *currentReading){
+    if(*minCurrent > *currentReading ){
         *minCurrent = *currentReading;
         *currChangemin = true;
     }else if(*maxCurrent < *currentReading){

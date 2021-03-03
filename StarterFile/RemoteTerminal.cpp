@@ -19,7 +19,7 @@ int terminalPrompt () {
     Serial.println("[1] Reset EEPROM");                     // Display Prompt
     Serial.println("[2] HV Current Range [Hi, Lo]");
     Serial.println("[3] HV Voltage Range [Hi, Lo]");
-    Serial.println("[3] HV Voltage Range [Hi, Lo]");
+    Serial.println("[4] Temperature Range [Hi, Lo]");
     Serial.println("Enter your menu choice [1-4]:");
     Serial.println();
     //while (Serial.available() == 0) {                       // Wait for user input
