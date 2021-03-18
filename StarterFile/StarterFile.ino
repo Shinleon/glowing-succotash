@@ -344,7 +344,7 @@ void setup() {
 
    
     /*Initialize Display*/
-    displayUpdates = {&hvilPin, &contactorState, &contactorLED, &hvCurrent, &hvVoltage, &temperature, &hVIL, &hVoltInterlock, &overCurrent, &hVoltOutofRange, &stateOfCharge, &contactorAck, &acknowledgeFlag, &soc_value};        // Initialize display data struct with data    
+    displayUpdates = {&hvilPin, &contactorState, &contactorLED, &hvCurrent, &hvVoltage, &temperature, &hVIL, &hVoltInterlock, &overCurrent, &hVoltOutofRange, &stateOfCharge, &contactorAck, &acknowledgeFlag, &soc_value, &relX, &relY, &relZ, &totalDist, &angleX, &angleY, &angleZ};        // Initialize display data struct with data    
     displayTCB.task = &displayTask;                                     // Store a pointer to the displayTask update function in the TCB
     displayTCB.taskDataPtr = &displayUpdates;
  

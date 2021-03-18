@@ -91,6 +91,13 @@ typedef struct displayTaskData {      // Data structure for the display task,
     bool* contactorAck;
     bool* acknowledgeFlag;
     float* soc_value;
+    float* relX;                      // Relative positon, X-axis
+    float* relY;                      // Relative positon, Y-axis
+    float* relZ;                      // Relative positon, Z-axis
+    float* totalDist;                 // Total distance traveled
+    float* angleX;                    // Static angle of X
+    float* angleY;                    // Static angle of Y
+    float* angleZ;                    // Static angle of Z
     
 } displayData;
 
