@@ -65,13 +65,13 @@ TCB datalogTCB;                 // Declare data logger TCB
 TCB accelerometerTCB;           // Declare accelerometer TCB
 
 accelerometerData accel;        // Accelerometer Data
-float relX = 0;                 // Relative positon, X-axis
-float relY = 0;                 // Relative positon, Y-axis
-float relZ = 0;                 // Relative positon, Z-axis
-float totalDist = 0;            // Total distance traveled
-float angleX = 0;               // Static angle of X
-float angleY = 0;               // Static angle of Y
-float angleZ = 0;               // Static angle of Z
+float relX = 1;                 // Relative positon, X-axis
+float relY = 1;                 // Relative positon, Y-axis
+float relZ = 1;                 // Relative positon, Z-axis
+float totalDist = 1;            // Total distance traveled
+float angleX = 1;               // Static angle of X
+float angleY = 1;               // Static angle of Y
+float angleZ = 1;               // Static angle of Z
 byte zPin = A10;                // Pin to read z axis
 byte yPin = A14;                // Pin to read y axis
 byte xPin = A15;               // Pin to read x axis

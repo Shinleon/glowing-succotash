@@ -20,6 +20,7 @@ extern "C" {
 #define MEASURE 0x00
 #define ALARM 0x01
 #define BATTERY 0x02
+#define ACCEL 0x03
 
 #define ACTIVE_NO_ACK   1
 #define ACTIVE_ACK      2

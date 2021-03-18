@@ -25,6 +25,10 @@ extern uint16_t buttoncolors[3];
 extern Elegoo_GFX_Button batteryButtons[2];
 extern char batteryButtonLabels[2][4];
 
+/*Accelerometer Button*/
+extern Elegoo_GFX_Button accButton[1];                                 // Elegoo Button for the accerlerometer
+extern char acclabel[1][15];
+
 /*Alarm Screen button*/
 extern Elegoo_GFX_Button alarmButtons[1];
 extern char alarmButtonLabels[1][12];
@@ -36,6 +40,15 @@ float localHVVoltage     = 0;
 float localTemperature   = 0;
 bool localHVIL           = 0;
 const byte localHvilPin  = 22;
+
+/*Accelerometer Data*/
+float localrelX = 0;                      // Relative positon, X-axis
+float localrelY = 0;                      // Relative positon, Y-axis
+float localrelZ = 0;                      // Relative positon, Z-axis
+float localtotalDist = 0;                 // Total distance traveled
+float localangleX = 0;                    // Static angle of X
+float localangleY = 0;                    // Static angle of Y
+float localangleZ = 0;                    // Static angle of 
 
 /*Alarm Data*/
 byte localHVoltInterlock = 0;
@@ -215,6 +228,53 @@ void displayBatteryScreen (bool* contactorAck){
     }
     return; 
 }
+/*********************************************************************************
+    * Function name: displayAccelScreen
+    * Function inputs: void
+    * Function outputs: void
+    * Function description: Draws the accerlerometer labels on the accelerometer screen. 
+    * Author(s): Leonard Shin, Leika Yamada
+    ******************************************************************************/  
+void displayAccelScreen (void){
+  
+    currentScreen = ACCEL;                      // Set the current screen to accelerometer screen
+    
+    tft.fillRect(0, 0, 240, 200, BLACK);          // Set background to black
+    tft.setCursor(50, 0);  
+                                                                                       
+    tft.setTextColor(CYAN); 
+    tft.setTextSize(2);
+                                                              
+    tft.print("Accelerometer"); 
+    
+    tft.setTextSize(1.5);
+    tft.setCursor(10, 40);
+    tft.print("Relative Position (cm): "); 
+    
+    tft.setCursor(10, 60);
+    tft.print("X: ");
+    
+    tft.setCursor(10, 70);
+    tft.print("Y: ");
+    tft.setCursor(10, 80);
+    tft.print("Z: ");
+                                                                        
+    tft.setCursor(10, 100);
+    tft.print("Total Distance (cm): ");
+    
+    tft.setCursor(10, 120);
+    tft.print("Angle (degrees): ");
+    
+    tft.setCursor(10, 130);
+    tft.print("X: ");
+    tft.setCursor(10, 140);
+    tft.print("Y: ");
+    tft.setCursor(10, 150);
+    tft.print("Z: ");
+    
+   
+    return; 
+}
 
 /*********************************************************************************
     * Function name: updateMeasurementDisplay
@@ -380,7 +440,80 @@ void updateAlarmDisplay (volatile byte* hVoltInterlock, byte* hVoltOutofRange, b
     
     return;
 }
+/*********************************************************************************
+    * Function name: updatAccelDisplay
+    * Function inputs: void
+    * Function outputs: void
+    * Function description: Updates the values displayed on the measurement screen. 
+    *                       Checks if the local copy is updated to the global copy
+    *                       if false, update the value on the screen, do nothing if
+    *                       already updated.
+    * Author(s): Leonard Shin, Leika Yamada
+    ******************************************************************************/
+void updateAccelDisplay(float* relX, float* relY, float* relZ, float* totalDist, float* angleX, float* angleY, float* angleZ) {
 
+
+    tft.setTextSize(1.5);
+    tft.setTextColor(CYAN);
+
+    if( *relX != localrelX){            
+      
+        localrelX = *relX;
+        tft.fillRect(40, 60, 40, 10, BLACK);
+        tft.setCursor(40, 60); 
+        tft.print(localrelX);
+      
+    }
+    if( *relY != localrelY){            
+      
+        localrelY = *relY;
+        tft.fillRect(40, 70, 40, 10, BLACK);
+        tft.setCursor(40, 70); 
+        tft.print(localrelY);
+      
+    }
+    if( *relZ != localrelZ){            
+      
+        localrelZ = *relZ;
+        tft.fillRect(40, 80, 40, 10, BLACK);
+        tft.setCursor(40, 80); 
+        tft.print(localrelZ);
+      
+    }
+    if( *totalDist != localtotalDist){            
+      
+        localtotalDist = *totalDist;
+        tft.fillRect(140, 100, 40, 10, BLACK);
+        tft.setCursor(140, 100); 
+        tft.print(localtotalDist);
+      
+    }
+     if( *angleX != localangleX){            
+      
+        localangleX = *angleX;
+        tft.fillRect(40, 130, 40, 10, BLACK);
+        tft.setCursor(40, 130); 
+        tft.print(localangleX);
+      
+    }
+    if( *angleY != localangleY){            
+      
+        localangleY = *angleY;
+        tft.fillRect(40, 140, 40, 10, BLACK);
+        tft.setCursor(40, 140); 
+        tft.print(localangleY);
+      
+    }
+    if( *angleZ != localangleZ){            
+      
+        localangleZ = *angleZ;
+        tft.fillRect(40, 150, 40, 10, BLACK);
+        tft.setCursor(40, 150); 
+        tft.print(localangleZ);
+      
+    }
+    return;
+}
 /*********************************************************************************
     * Function name: updateDisplay
     * Function inputs: void
@@ -408,7 +541,7 @@ void updateDisplay (bool* contactorState, bool* contactorAck){
     
     if( currentScreen == BATTERY ){
                                                                                       // Check if buttons are pressed
-    for (uint8_t b=0; b<2; b++) {
+      for (uint8_t b=0; b<2; b++) {
       
         if ( batteryButtons[b].contains(p.x, p.y)) {
             
@@ -416,9 +549,9 @@ void updateDisplay (bool* contactorState, bool* contactorAck){
         } else {
             batteryButtons[b].press(false);                                           // Button not pressed
         }
-    }
+      }
 
-    for ( uint8_t b=0; b<2; b++ ) {
+      for ( uint8_t b=0; b<2; b++ ) {
         if ( batteryButtons[b].justReleased() ) { 
             /*buttons[b].drawButton(true); Uncomment to Draw inverted button*/        // Re-draw normal version of button if it was inverted
         }
@@ -439,11 +572,19 @@ void updateDisplay (bool* contactorState, bool* contactorAck){
             }
         
         /*delay(100); uncomment to debounce UI*/
+          }
         }
       }
+    if (accButton[0].contains(p.x, p.y)){
+        accButton[0].press(true);
+    }else {
+        accButton[0].press(false);  
     }
+    if (accButton[0].justPressed()){
+          accelButton = true;
+      }
    
-                                                                                        // Check if measurement, alarm, or battery button is pressed
+                                                                                        // Check if measurement, alarm, battery, or accelerometer button is pressed
     for ( uint8_t b=0; b<3; b++ ) {
       
         if (buttons[b].contains(p.x, p.y)) {
@@ -584,6 +725,11 @@ void displayTask ( void* dispData ) {
                                                                                           // Reset measure button to be false, so code does not repeatedly execute
             batteryButton = false;  
         }
+        else if ( accelButton == true){
+            displayAccelScreen();                                                         // Display Accerlometer screen then set accel button to be false to prevent repeted execution.
+            
+            accelButton = false;
+          }
     }
                                                                                           // Check the current screen, then update the values on those screens
     if( currentScreen == MEASURE ){
@@ -594,9 +740,12 @@ void displayTask ( void* dispData ) {
       
         updateAlarmDisplay(data->hVoltInterlock, data->hVoltOutofRange, data->overCurrent);
     }
-    else{
+    else if( currentScreen == BATTERY ){
       
         updateBatteryDisplay(data->contactorState);
-    } 
+    }
+    else {
+        updateAccelDisplay(data->relX, data->relY, data->relZ, data->totalDist, data->angleX, data->angleY, data->angleZ);     
+    }
   return;
 }
