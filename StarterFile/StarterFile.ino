@@ -12,6 +12,7 @@
 #include "Alarm.h"
 #include "RemoteTerminal.h"
 #include "DataLog.h"
+#include "Accelerometer.h"
 
 
 #include <pin_magic.h>
@@ -60,8 +61,19 @@ TCB alarmTCB;                   // Declare alarm TCB
 TCB displayTCB;                 // Declare display TCB   [Display should be last task done each cycle]
 TCB terminalTCB;                // Declare remote terminal TCB
 TCB datalogTCB;                 // Declare data logger TCB
+TCB accelerometerTCB;           // Declare accelerometer TCB
 
-bool EEPROMReset = false;        // Flag to check if the user wants to reset EEPROM
+accelerometerData accel;        // Accelerometer Data
+float relX = 0;                 // Relative positon, X-axis
+float relY = 0;                 // Relative positon, Y-axis
+float relZ = 0;                 // Relative positon, Z-axis
+float totalDist = 0;            // Total distance traveled
+float angleX = 0;               // Static angle of X
+float angleY = 0;               // Static angle of Y
+float angleZ = 0;               // Static angle of Z
+
+
+bool EEPROMReset = false;       // Flag to check if the user wants to reset EEPROM
 terminalData terminal;          // Remote terminal data struct
 logData dataLog;                // DataLog data struct
 
@@ -320,6 +332,10 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(hvilPin), hvilISR , RISING);
     interrupts();
 
+    /* INitialize Accelerometer */
+    accel = {&relX, &relY, &relZ, &totalDist, &angleX, &angleY, &angleZ};
+    accelerometerTCB.task = &accelerometerTask;
+    accelerometerTCB.taskDataPtr = &accel;
        
     /* Initialize Measurement & Sensors*/
     measure = {&hVIL, &hvilPin, &temperature, &tempPin, &hvCurrent, &currPin, &hvVoltage, &voltPin, &EEPROMReset, &minTemp, &maxTemp, &minCurrent, &maxCurrent, &minVolt, &maxVolt, &tempChangemin, &voltChangemin, &currChangemin, &tempChangemax, &voltChangemax, &currChangemax};  // Initailize measure data struct with data
