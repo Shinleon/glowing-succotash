@@ -17,6 +17,7 @@ extern byte currentScreen;
 extern bool measureButton;
 extern bool alarmButton;
 extern bool batteryButton;
+extern bool accelButton;
 
 extern Elegoo_GFX_Button buttons[3];
 extern char buttonlabels[3][9];

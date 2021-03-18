@@ -19,6 +19,9 @@ typedef struct accelerometerTaskData {  // Structure that holds contactor data
     float* angleX;               // Static angle of X
     float* angleY;               // Static angle of Y
     float* angleZ;               // Static angle of Z
+    byte* xPin;                  // X axis input pin
+    byte* yPin;                  // Y axis input pin
+    byte* zPin;                  // Z axis input pin
 } accelerometerData;
 
 

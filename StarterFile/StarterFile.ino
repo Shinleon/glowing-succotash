@@ -45,6 +45,7 @@
 #define MEASURE 0x00  // Used to keep track of which screen is displayed: Measurement screen
 #define ALARM 0x01    // Used to keep track of which screen is displayed: Alarm screen
 #define BATTERY 0x02  // Used to keep track of which screen is displayed: Battery screen
+#define ACCEL 0x03  // Used to keep track of which screen is displayed: Accelerometer screen
 
 #define SOC 0                   // Constant SOC value
 
@@ -71,6 +72,9 @@ float totalDist = 0;            // Total distance traveled
 float angleX = 0;               // Static angle of X
 float angleY = 0;               // Static angle of Y
 float angleZ = 0;               // Static angle of Z
+byte zPin = A10;                // Pin to read z axis
+byte yPin = A14;                // Pin to read y axis
+byte xPin = A15;               // Pin to read x axis
 
 
 bool EEPROMReset = false;       // Flag to check if the user wants to reset EEPROM
@@ -129,8 +133,13 @@ char buttonlabels[3][9]   = {"Measures", "Alarms", "Battery"};
 uint16_t buttoncolors[3]  = {CYAN, CYAN, CYAN};
 bool measureButton = 0;                                      // Flag is true when the measuremnt screen button is pushed 
 bool batteryButton = 0;                                      // Flag is true when the battery screen button is pushed
-bool alarmButton = 0;                                        // Flag is true when the alarm screen button is pushed
-byte currentScreen = 0;                                      // Stores which screen the user is on, 0 for measurement, 1 for alarm, 2 for battery
+bool alarmButton = 0;                                        // Flag is true when the alarm screen button is pushed   
+bool accelButton = 0;                                        // Flag is true when the accelerometer screen button is pushed 
+byte currentScreen = 0;                                      // Stores which screen the user is on, 0 for measurement, 1 for alarm, 2 for battery, 3 for accelerometer
+
+
+Elegoo_GFX_Button accButton[1];                                 // Elegoo Button for the accerlerometer
+char acclabel[1][15]   = {"Accel."}; 
 
 /*Battery Screen buttons*/
 Elegoo_GFX_Button batteryButtons[2];                         // Creates an array of buttons for the battery ON, OFF buttons
@@ -333,7 +342,7 @@ void setup() {
     interrupts();
 
     /* INitialize Accelerometer */
-    accel = {&relX, &relY, &relZ, &totalDist, &angleX, &angleY, &angleZ};
+    accel = {&relX, &relY, &relZ, &totalDist, &angleX, &angleY, &angleZ, &xPin, &yPin, &zPin};
     accelerometerTCB.task = &accelerometerTask;
     accelerometerTCB.taskDataPtr = &accel;
        
@@ -352,7 +361,8 @@ void setup() {
     measureButton = 1;                                                  // Initalize the measure button as pressed to start display with measure screen
     batteryButton = 0;                                                  // Battery button initialized as not pressed
     alarmButton = 0;                                                    // Alarm screen button initialized as not pressed
-    currentScreen = MEASURE;                                            // Initialize start screen as measurement screen
+    accelButton = 0;                                                    // Accerlerometer screen button initialized as not pressed
+    currentScreen = MEASURE;                                            // Initialize start screen as accerlerometer screen
 
     
     /*Initialize Contactor*/
@@ -394,7 +404,6 @@ void setup() {
     alarmTCB.next = &contactorTCB;
     
     contactorTCB.prev = &alarmTCB;
-    //contactorTCB.next = &displayTCB;
     contactorTCB.next = &terminalTCB;
 
     terminalTCB.prev = &contactorTCB;
@@ -463,4 +472,8 @@ void setup() {
                  buttonlabels[row], BUTTON_TEXTSIZE); 
       buttons[row].drawButton();
   }
+  accButton[0].initButton(&tft, BUTTON1_SPACING_X + BUTTON2_SPACING_X, BUTTON_Y + 50,
+                 BUTTON_W*2, BUTTON_H, WHITE, buttoncolors[0], BLACK,
+                 acclabel[0], BUTTON_TEXTSIZE);
+  accButton[0].drawButton();
 }
