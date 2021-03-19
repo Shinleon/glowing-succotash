@@ -65,13 +65,13 @@ TCB datalogTCB;                 // Declare data logger TCB
 TCB accelerometerTCB;           // Declare accelerometer TCB
 
 accelerometerData accel;        // Accelerometer Data
-float relX = 1;                 // Relative positon, X-axis
-float relY = 1;                 // Relative positon, Y-axis
-float relZ = 1;                 // Relative positon, Z-axis
-float totalDist = 1;            // Total distance traveled
-float angleX = 1;               // Static angle of X
-float angleY = 1;               // Static angle of Y
-float angleZ = 1;               // Static angle of Z
+float relX = 0;                 // Relative positon, X-axis
+float relY = 0;                 // Relative positon, Y-axis
+float relZ = 0;                 // Relative positon, Z-axis
+float totalDist = 0;            // Total distance traveled
+float angleX = 0;               // Static angle of X
+float angleY = 0;               // Static angle of Y
+float angleZ = 0;               // Static angle of Z
 byte zPin = A10;                // Pin to read z axis
 byte yPin = A14;                // Pin to read y axis
 byte xPin = A15;               // Pin to read x axis
@@ -360,11 +360,11 @@ void setup() {
     displayTCB.taskDataPtr = &displayUpdates;
  
     /*Initialize Touch Input*/
-    measureButton = 1;                                                  // Initalize the measure button as pressed to start display with measure screen
+    measureButton = 0;                                                  // Initalize the measure button as pressed to start display with measure screen
     batteryButton = 0;                                                  // Battery button initialized as not pressed
     alarmButton = 0;                                                    // Alarm screen button initialized as not pressed
-    accelButton = 0;                                                    // Accerlerometer screen button initialized as not pressed
-    currentScreen = MEASURE;                                            // Initialize start screen as accerlerometer screen
+    accelButton = 1;                                                    // Accerlerometer screen button initialized as not pressed
+    currentScreen = ACCEL;                                            // Initialize start screen as accerlerometer screen
 
     
     /*Initialize Contactor*/

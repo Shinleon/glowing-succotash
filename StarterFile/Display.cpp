@@ -42,10 +42,10 @@ bool localHVIL           = 0;
 const byte localHvilPin  = 22;
 
 /*Accelerometer Data*/
-float localrelX = 0;                      // Relative positon, X-axis
-float localrelY = 0;                      // Relative positon, Y-axis
-float localrelZ = 0;                      // Relative positon, Z-axis
-float localtotalDist = 0;                 // Total distance traveled
+float localrelX = 1;                      // Relative positon, X-axis
+float localrelY = 1;                      // Relative positon, Y-axis
+float localrelZ = 1;                      // Relative positon, Z-axis
+float localtotalDist = 1;                 // Total distance traveled
 float localangleX = 0;                    // Static angle of X
 float localangleY = 0;                    // Static angle of Y
 float localangleZ = 0;                    // Static angle of 
@@ -459,7 +459,7 @@ void updateAccelDisplay(float* relX, float* relY, float* relZ, float* totalDist,
     if( *relX != localrelX){            
       
         localrelX = *relX;
-        tft.fillRect(40, 60, 40, 10, BLACK);
+        tft.fillRect(40, 60, 80, 10, BLACK);
         tft.setCursor(40, 60); 
         tft.print(localrelX);
       
@@ -467,7 +467,7 @@ void updateAccelDisplay(float* relX, float* relY, float* relZ, float* totalDist,
     if( *relY != localrelY){            
       
         localrelY = *relY;
-        tft.fillRect(40, 70, 40, 10, BLACK);
+        tft.fillRect(40, 70, 80, 10, BLACK);
         tft.setCursor(40, 70); 
         tft.print(localrelY);
       
@@ -475,7 +475,7 @@ void updateAccelDisplay(float* relX, float* relY, float* relZ, float* totalDist,
     if( *relZ != localrelZ){            
       
         localrelZ = *relZ;
-        tft.fillRect(40, 80, 40, 10, BLACK);
+        tft.fillRect(40, 80, 80, 10, BLACK);
         tft.setCursor(40, 80); 
         tft.print(localrelZ);
       
@@ -483,7 +483,7 @@ void updateAccelDisplay(float* relX, float* relY, float* relZ, float* totalDist,
     if( *totalDist != localtotalDist){            
       
         localtotalDist = *totalDist;
-        tft.fillRect(140, 100, 40, 10, BLACK);
+        tft.fillRect(140, 100, 80, 10, BLACK);
         tft.setCursor(140, 100); 
         tft.print(localtotalDist);
       

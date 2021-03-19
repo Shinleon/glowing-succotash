@@ -10,9 +10,42 @@ float yadj = -0.21;             // Calibration Values for y
 float zadj = -0.17;             // Calibration Values for z
 float oneG = 1.65;              // According to Accelerometer spec sheet a voltage of 1.65 is read at 1g.
 float sensitivity = 0.800;      // According to spec sheet typical sensitivity = 0.800V/g
-float avgXAcc;
-float avgYAcc;
-float avgZAcc;
+float avgXAcc;                  // Avg. accerlation on x axis
+float avgYAcc;                  // Avg. accerlation on y axis
+float avgZAcc;                  // Avg. accerlation on z axis
+float interval = 0.1;           // Time interval over which to integrate
+float g = 9.81;                 // Acceleration due to gravity
+float toCM = 100;               // Meters to cm conversion
+  
+
+/*************************************************************************
+  * Function name: displacement
+  * Function inputs: float* acceleration
+  * Function outputs: float disp
+  * Function description: Calculates position from accerlation via definite
+  *                       double integral with respect to time. In this case
+  *                       we use the global time base preset interval from 
+  *                       0 - .5s so the integral is reduced to below.
+  * Author(s): Leonard Shin, Leika Yamada
+  ************************************************************************/
+float displacement(float* accel){
+    
+    float disp = *accel * g * (toCM) * (pow(interval, 2));                           // Calculate displacement from accerlation via reduced double integral
+    return disp;
+}
+/*************************************************************************
+  * Function name: distance
+  * Function inputs: float* dx, float* dt
+  * Function outputs: float dist
+  * Function description: Calculates the euclidean distance from 2d axis 
+  *                       displacement.
+  * Author(s): Leonard Shin, Leika Yamada
+  ************************************************************************/
+float distance(float* dx, float* dy){
+    
+    float dist = sqrt(pow(*dx, 2) + pow(*dy, 2));                                   // Calculate euclidean distance
+    return dist;
+}
 /*************************************************************************
   * Function name: acceleration
   * Function inputs: byte* pin, float* adjust
@@ -75,7 +108,15 @@ void accelerometerTask ( void* accelData ) {
     *data->angleX = angle(&avgXAcc);                               // Calculate static angle and store in global var
     *data->angleY = angle(&avgYAcc);
     *data->angleZ = angle(&avgZAcc);
+
+    float myX = displacement(&avgXAcc);                 // Relative positon, X-axis
+    float myY = displacement(&avgYAcc);                 // Relative positon, Y-axis
+    float myZ = displacement(&avgZAcc);                 // Relative positon, Z-axis
+
+    *data->totalDist = *data->totalDist + distance(&myX, &myY);
     
-    
+    *data->relX = *data->relX + myX;                 // Relative positon, X-axis
+    *data->relY = *data->relY + myY;                 // Relative positon, Y-axis
+    *data->relZ = *data->relZ + myZ;                 // Relative positon, Z-axis
     return;
 }
