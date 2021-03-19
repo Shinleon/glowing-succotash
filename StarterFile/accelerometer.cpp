@@ -5,9 +5,6 @@
 
 float inVolt = 5;
 float analogHigh = 1023;
-float xadj = -0.07;             // Calibration Values for x
-float yadj = -0.21;             // Calibration Values for y
-float zadj = -0.17;             // Calibration Values for z
 float oneG = 1.65;              // According to Accelerometer spec sheet a voltage of 1.65 is read at 1g.
 float sensitivity = 0.800;      // According to spec sheet typical sensitivity = 0.800V/g
 float avgXAcc;                  // Avg. accerlation on x axis
@@ -88,9 +85,9 @@ void accelerometerTask ( void* accelData ) {
     float yArr[200];                                              // Initialize buffer for y axis
     float zArr[200];                                              // Initialize buffer for z axis
     for(int i = 0; i < 200; i++){
-      xArr[i] = acceleration(data->xPin, &xadj);                  // Take 200 samples to calculate static angle
-      yArr[i] = acceleration(data->yPin, &yadj);
-      zArr[i] = acceleration(data->zPin, &zadj);  
+      xArr[i] = acceleration(data->xPin, data->xadj);                  // Take 200 samples to calculate static angle
+      yArr[i] = acceleration(data->yPin, data->yadj);
+      zArr[i] = acceleration(data->zPin, data->zadj);  
     }
     avgXAcc = 0;
     avgYAcc = 0;

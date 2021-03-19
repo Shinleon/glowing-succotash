@@ -74,7 +74,11 @@ float angleY = 0;               // Static angle of Y
 float angleZ = 0;               // Static angle of Z
 byte zPin = A10;                // Pin to read z axis
 byte yPin = A14;                // Pin to read y axis
-byte xPin = A15;               // Pin to read x axis
+byte xPin = A15;                // Pin to read x axis
+
+float xadj = -0.07;             // Calibration Values for x
+float yadj = -0.21;             // Calibration Values for y
+float zadj = -0.17;             // Calibration Values for z
 
 
 bool EEPROMReset = false;       // Flag to check if the user wants to reset EEPROM
@@ -200,7 +204,7 @@ void scheduler() {
     head = &measurementTCB;   //always start with measurement task
     curr = head;
     curr = insert_tcb(curr, &stateOfChargeTCB);
-    curr = insert_tcb(curr, &alarmTCB);
+    //curr = insert_tcb(curr, &alarmTCB);
     curr = insert_tcb(curr, &contactorTCB);
     if(tenths % 10 == 0 )
     {
@@ -344,7 +348,7 @@ void setup() {
     interrupts();
 
     /* INitialize Accelerometer */
-    accel = {&relX, &relY, &relZ, &totalDist, &angleX, &angleY, &angleZ, &xPin, &yPin, &zPin};
+    accel = {&relX, &relY, &relZ, &totalDist, &angleX, &angleY, &angleZ, &xPin, &yPin, &zPin, &xadj, &yadj, &zadj};
     accelerometerTCB.task = &accelerometerTask;
     accelerometerTCB.taskDataPtr = &accel;
        

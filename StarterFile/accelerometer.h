@@ -22,6 +22,9 @@ typedef struct accelerometerTaskData {  // Structure that holds contactor data
     byte* xPin;                  // X axis input pin
     byte* yPin;                  // Y axis input pin
     byte* zPin;                  // Z axis input pin
+    float* xadj;                 // Calibration Values for x
+    float* yadj;                 // Calibration Values for y
+    float* zadj;                 // Calibration Value for z
 } accelerometerData;
 
 
