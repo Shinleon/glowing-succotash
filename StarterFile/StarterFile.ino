@@ -104,7 +104,8 @@ bool currChangemin = false;        // Flag to check if the min current has chang
 bool tempChangemax = false;        // Flag to check if the max temperature has changed
 bool voltChangemax = false;        // Flag to check if the max voltage has changed
 bool currChangemax = false;        // Flag to check if the max current has changed
-bool recover = true;
+//bool recover = true;
+bool recover = false;
                                
 alarmData alarmStatus;                // Declare an Alarm data structure - defined in Alarm.h
 volatile byte hVoltInterlock = 0;     // Store the alarm status for the HVIL alarm
@@ -210,6 +211,7 @@ void scheduler() {
     {
         curr = insert_tcb(curr, &datalogTCB);
     }
+    curr = insert_tcb(curr, &accelerometerTCB);
     curr = insert_tcb(curr, &displayTCB);    
     return;
 }
@@ -410,10 +412,12 @@ void setup() {
     terminalTCB.next = &datalogTCB;
 
     datalogTCB.prev = &terminalTCB;
-    datalogTCB.next = &displayTCB;
-
-    displayTCB.prev = &terminalTCB;
-    //displayTCB.prev = &contactorTCB;
+    datalogTCB.next = &accelerometerTCB;
+  
+    accelerometerTCB.prev = &datalogTCB;
+    accelerometerTCB.next = &displayTCB;
+    
+    displayTCB.prev = &accelerometerTCB;
     displayTCB.next = NULL;
 
 
